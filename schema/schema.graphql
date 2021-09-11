@@ -7,6 +7,12 @@ interface Node {
   id: ID!
 }
 
+enum EntityType {
+  USER
+  PARTICIPANT
+  MESSAGE
+}
+
 """
 Chat User
 """
@@ -15,6 +21,8 @@ type User implements Node
     additionalFields: [
       { path: "pk", type: "string" }
       { path: "sk", type: "string" }
+      { path: "organizationID", type: "string" }
+      { path: "type", type: "EntityType" }
     ]
   ) {
   """
@@ -22,9 +30,9 @@ type User implements Node
   """
   id: ID! @id
   givenName: String! @column
-  familyName: String! @column
-  email: String! @column
-  phone: String! @column
+  familyName: String @column
+  email: String @column
+  phone: String @column
   conversations(limit: Int!, nextKey: String!): [Conversation!]!
 }
 
@@ -38,6 +46,8 @@ type Participant
       { path: "sk", type: "string" }
       { path: "conversationID", type: "string" }
       { path: "userID", type: "string" }
+      { path: "organizationID", type: "string" }
+      { path: "type", type: "EntityType" }
     ]
   ) {
   conversation: Conversation!
@@ -61,6 +71,10 @@ type Message implements Node
     additionalFields: [
       { path: "pk", type: "string" }
       { path: "sk", type: "string" }
+      { path: "organizationID", type: "string" }
+      { path: "userID", type: "string" }
+      { path: "conversationID", type: "string" }
+      { path: "type", type: "EntityType" }
     ]
   ) {
   id: ID! @id
@@ -69,19 +83,31 @@ type Message implements Node
 }
 
 type Mutation {
-  addParticipant(input: AddParticipantInput!): Conversation!
   addMessage(input: AddMessageInput!): Message!
+  addParticipant(input: AddParticipantInput!): Conversation!
+  updateUser(input: UpdateUserInput!): User!
+}
+
+input AddMessageInput {
+  userID: ID!
+  conversationID: ID!
+  organizationID: ID!
+  text: String!
 }
 
 input AddParticipantInput {
   conversationID: ID!
+  organizationID: ID!
   userID: ID!
 }
 
-input AddMessageInput {
+input UpdateUserInput {
+  email: AWSEmail
+  familyName: String
+  givenName: String!
   id: ID!
-  conversationID: ID!
-  text: String!
+  organizationID: ID!
+  phone: AWSPhone
 }
 
 type Subscription {
