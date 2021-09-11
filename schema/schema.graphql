@@ -1,5 +1,6 @@
 type Query {
-  user: User!
+  user(id: ID!, organization: ID!): User!
+  conversation(id: ID!, organization: ID!): Conversation!
 }
 
 interface Node {
