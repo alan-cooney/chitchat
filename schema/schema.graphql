@@ -1,6 +1,3 @@
-"""
-Queries
-"""
 type Query {
   user: User!
 }
@@ -73,9 +70,6 @@ type Message implements Node
   text: String! @column
 }
 
-"""
-Mutations
-"""
 type Mutation implements Node {
   createConversation(input: CreateConversationInput!): Conversation!
   addParticipant(input: AddParticipantInput!): Conversation!
@@ -97,14 +91,15 @@ input AddMessageInput {
   text: String!
 }
 
-"""
-Subscriptions
-"""
 type Subscription {
-  addedParticipant(input: CreateConversationInput!): Conversation!
+  addedParticipant(input: AddedParticipantSubscriptionInput!): Conversation!
     @aws_subscribe(mutations: ["addParticipant"])
   addedMessage(input: AddMessageSubscriptionInput!): Message!
     @aws_subscribe(mutations: ["addMessage"])
+}
+
+input AddedParticipantSubscriptionInput {
+  userID: ID!
 }
 
 input AddMessageSubscriptionInput {

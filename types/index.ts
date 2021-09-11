@@ -31,6 +31,10 @@ type AddParticipantInput = {
   userID: Scalars['ID'];
 };
 
+type AddedParticipantSubscriptionInput = {
+  userID: Scalars['ID'];
+};
+
 /** Conversation */
 type Conversation = Node & {
   __typename?: 'Conversation';
@@ -58,6 +62,7 @@ type Message = Node & {
   text: Scalars['String'];
 };
 
+/** Mutations */
 type Mutation = Node & {
   __typename?: 'Mutation';
   addMessage: Message;
@@ -66,16 +71,19 @@ type Mutation = Node & {
 };
 
 
+/** Mutations */
 type MutationaddMessageArgs = {
   input: AddMessageInput;
 };
 
 
+/** Mutations */
 type MutationaddParticipantArgs = {
   input: AddParticipantInput;
 };
 
 
+/** Mutations */
 type MutationcreateConversationArgs = {
   input: CreateConversationInput;
 };
@@ -91,11 +99,13 @@ type Participant = {
   user: User;
 };
 
+/** Queries */
 type Query = {
   __typename?: 'Query';
   user: User;
 };
 
+/** Subscriptions */
 type Subscription = {
   __typename?: 'Subscription';
   addedMessage: Message;
@@ -103,13 +113,15 @@ type Subscription = {
 };
 
 
+/** Subscriptions */
 type SubscriptionaddedMessageArgs = {
   input: AddMessageSubscriptionInput;
 };
 
 
+/** Subscriptions */
 type SubscriptionaddedParticipantArgs = {
-  input: CreateConversationInput;
+  input: AddedParticipantSubscriptionInput;
 };
 
 /** Chat User */
@@ -119,6 +131,7 @@ type User = Node & {
   email: Scalars['String'];
   familyName: Scalars['String'];
   givenName: Scalars['String'];
+  /** Unique user ID */
   id: Scalars['ID'];
   phone: Scalars['String'];
 };
@@ -131,16 +144,16 @@ type UserconversationsArgs = {
 };
 
 
-export type ConversationDbObject = {
-  id: string,
-};
-
 export type MessageDbObject = {
   id: string,
   text: string,
+  pk: string,
+  sk: string,
 };
 
 export type ParticipantDbObject = {
+  pk: string,
+  sk: string,
   conversationID: string,
   userID: string,
 };
@@ -151,4 +164,6 @@ export type UserDbObject = {
   givenName: string,
   id: string,
   phone: string,
+  pk: string,
+  sk: string,
 };
