@@ -5,7 +5,7 @@ import {
   StreamViewType,
   Table,
 } from "@aws-cdk/aws-dynamodb";
-import { GraphqlApi, Schema } from "@aws-cdk/aws-appsync";
+import { AuthorizationType, GraphqlApi, Schema } from "@aws-cdk/aws-appsync";
 import { join } from "path";
 import { spawnSync } from "child_process";
 
@@ -35,6 +35,16 @@ export default class BackendStack extends Stack {
       schema: Schema.fromAsset(
         join(__dirname, "../../dist/graphql-codegen/combined.graphql")
       ),
+      authorizationConfig: {
+        defaultAuthorization: {
+          authorizationType: AuthorizationType.IAM,
+          // openIdConnectConfig: {
+          //   oidcProvider: id.endsWith("Prox")
+          //     ? "https://chitchat-prod.eu.auth0.com"
+          //     : "https://chitchat-dev.eu.auth0.com",
+          // },
+        },
+      },
     });
 
     api.addDynamoDbDataSource("tableDataSource", table);
