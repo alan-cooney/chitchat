@@ -70,7 +70,7 @@ type Message implements Node
   text: String! @column
 }
 
-type Mutation implements Node {
+type Mutation {
   createConversation(input: CreateConversationInput!): Conversation!
   addParticipant(input: AddParticipantInput!): Conversation!
   addMessage(input: AddMessageInput!): Message!

@@ -1,0 +1,6 @@
+schema:
+  - ../schema/schema.graphql
+generates:
+  ./dist/graphql-codegen/combined.graphql:
+    plugins:
+      - ./dist/graphql-codegen/aws-schema-ast.js
