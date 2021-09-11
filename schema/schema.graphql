@@ -11,7 +11,6 @@ interface Node {
 Chat User
 """
 type User implements Node
-  # Accessed as pk = USER#uuid, sk = USER#UUID
   @entity(
     additionalFields: [
       { path: "pk", type: "string" }
@@ -33,7 +32,6 @@ type User implements Node
 Conversation Participant
 """
 type Participant
-  # Accessed as pk = USER#uuid, sk = UPDATED#datetime#CONV#uuid
   @entity(
     additionalFields: [
       { path: "pk", type: "string" }
@@ -59,7 +57,6 @@ type Conversation implements Node {
 Message
 """
 type Message implements Node
-  # Accessed as pk = CONV#uuid, sk = CREATED#created#MSG#uuid
   @entity(
     additionalFields: [
       { path: "pk", type: "string" }

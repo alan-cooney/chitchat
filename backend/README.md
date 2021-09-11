@@ -1,14 +1,11 @@
 # Backend Service
 
-![services/booking](https://github.com/skyhookadventure/app/workflows/services/backend/badge.svg)
+## Access Patterns
 
-## Checklist
+All access paters are for a specific organisation (saas customer).
 
-| CD Feature | Provided                                |
-| ---------- | --------------------------------------- |
-| ✅         | Typescript                              |
-| ✅         | Linting (AirBnB + Prettier)             |
-| ✅         | Unit tests (Jest)                       |
-| ✅         | Coverage check (ideally 100% with Jest) |
-| ❌         | Integration tests (depends on service)  |
-| ❌         | Github Continuous Deployment            |
+| Name                                         | pk                 | sk                     |
+| -------------------------------------------- | ------------------ | ---------------------- |
+| Get user                                     | ORG#uuid#USER#uuid | USER#uuid              |
+| Get user conversations, by last updated date | ORG#uuid#USER#uuid | UPDATED#date#CONV#uuid |
+| Get conversation messages                    | ORG#uuid#CONV#uuid | CREATED#date#MSG#uuid  |
