@@ -1,0 +1,8 @@
+{
+  "AUTH0_DOMAIN": "chitchat-prod.eu.auth0.com",
+  "AUTH0_CLIENT_ID": "as9hFRE4sDtfLnMWIRCPfqADVUfk9pPm",
+  "EXCLUDED_PROPS": {
+    "clients": ["client_secret"],
+    "connections": ["options.client_secret"]
+  }
+}

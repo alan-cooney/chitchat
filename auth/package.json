@@ -1,0 +1,13 @@
+{
+  "name": "@chitchat/auth",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "a0deploy": "a0deploy",
+    "deployProd": "a0deploy import --input_file tenant.yaml --config_file ./config/prod.json"
+  },
+  "devDependencies": {
+    "auth0-deploy-cli": "^7.2.1"
+  }
+}
