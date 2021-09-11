@@ -1,0 +1,37 @@
+schema:
+  - ../schema/**/*.graphql
+generates:
+  ./index.ts:
+    plugins:
+      - typescript:
+          scalars:
+            AWSDate: string
+            AWSTime: string
+            AWSDateTime: string
+            AWSTimestamp: string
+            AWSEmail: string
+            AWSJSON: '{ [key: string]: any }'
+            AWSURL: string
+            AWSPhone: string
+            AWSIPAddress: string
+          namingConvention: keep
+          enumValues: ./API
+          onlyOperationTypes: false
+          noExport: true
+      - typescript-mongodb:
+          scalars: # Must be duplicated due to a bug
+            AWSDate: string
+            AWSTime: string
+            AWSDateTime: string
+            AWSTimestamp: string
+            AWSEmail: string
+            AWSJSON: '{ [key: string]: any }'
+            AWSURL: string
+            AWSPhone: string
+            AWSIPAddress: string
+          namingConvention: keep
+          objectIdType: string
+          idFieldName: id
+          skipTypename: false
+          nonOptionalTypename: true
+          enumsAsString: false

@@ -1,0 +1,9 @@
+#
+# AWS Directive setup (for code-generation only)
+#
+# This is designed to help avoid errors with code generation (e.g. 'directive
+# not found'). It should not be uploaded to AWS Appsync as it will cause that
+# to fail.
+#
+
+directive @aws_subscribe(mutations: [String!]!) on FIELD_DEFINITION

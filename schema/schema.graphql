@@ -1,0 +1,112 @@
+"""
+Queries
+"""
+type Query {
+  user: User!
+}
+
+interface Node {
+  id: ID!
+}
+
+"""
+Chat User
+"""
+type User implements Node
+  # Accessed as pk = USER#uuid, sk = USER#UUID
+  @entity(
+    additionalFields: [
+      { path: "pk", type: "string" }
+      { path: "sk", type: "string" }
+    ]
+  ) {
+  """
+  Unique user ID
+  """
+  id: ID! @id
+  givenName: String! @column
+  familyName: String! @column
+  email: String! @column
+  phone: String! @column
+  conversations(limit: Int!, nextKey: String!): [Conversation!]!
+}
+
+"""
+Conversation Participant
+"""
+type Participant
+  # Accessed as pk = USER#uuid, sk = UPDATED#datetime#CONV#uuid
+  @entity(
+    additionalFields: [
+      { path: "pk", type: "string" }
+      { path: "sk", type: "string" }
+      { path: "conversationID", type: "string" }
+      { path: "userID", type: "string" }
+    ]
+  ) {
+  conversation: Conversation!
+  user: User!
+}
+
+"""
+Conversation
+"""
+type Conversation implements Node {
+  id: ID!
+  participants: [User!]!
+  messages(limit: Int!, nextKey: String!): [Message!]!
+}
+
+"""
+Message
+"""
+type Message implements Node
+  # Accessed as pk = CONV#uuid, sk = CREATED#created#MSG#uuid
+  @entity(
+    additionalFields: [
+      { path: "pk", type: "string" }
+      { path: "sk", type: "string" }
+    ]
+  ) {
+  id: ID! @id
+  conversation: Conversation!
+  text: String! @column
+}
+
+"""
+Mutations
+"""
+type Mutation implements Node {
+  createConversation(input: CreateConversationInput!): Conversation!
+  addParticipant(input: AddParticipantInput!): Conversation!
+  addMessage(input: AddMessageInput!): Message!
+}
+
+input CreateConversationInput {
+  id: ID!
+}
+
+input AddParticipantInput {
+  conversationID: ID!
+  userID: ID!
+}
+
+input AddMessageInput {
+  id: ID!
+  conversationID: ID!
+  text: String!
+}
+
+"""
+Subscriptions
+"""
+type Subscription {
+  addedParticipant(input: CreateConversationInput!): Conversation!
+    @aws_subscribe(mutations: ["addParticipant"])
+  addedMessage(input: AddMessageSubscriptionInput!): Message!
+    @aws_subscribe(mutations: ["addMessage"])
+}
+
+input AddMessageSubscriptionInput {
+  conversationID: ID!
+}
