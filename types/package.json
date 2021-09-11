@@ -1,7 +1,7 @@
 {
-  "name": "@serverlesschat/typescript",
+  "name": "@chitchat/typescript",
   "version": "1.0.0",
-  "description": "Types for Serverless Chat",
+  "description": "Types for ChitChat",
   "main": "dist/index.js",
   "scripts": {
     "generate": "graphql-codegen",
