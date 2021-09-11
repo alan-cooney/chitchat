@@ -10,7 +10,6 @@
     "watch": "tsc -w",
     "test": "jest",
     "coverage": "jest --collect-coverage",
-    "deployDev": "STAGE=Dev cdk deploy",
     "cdk": "cdk",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx,.gql,.graphql --ignore-path .gitignore --cache",
     "codegen": "graphql-codegen"
