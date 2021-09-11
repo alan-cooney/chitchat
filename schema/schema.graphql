@@ -72,13 +72,8 @@ type Message implements Node
 }
 
 type Mutation {
-  createConversation(input: CreateConversationInput!): Conversation!
   addParticipant(input: AddParticipantInput!): Conversation!
   addMessage(input: AddMessageInput!): Message!
-}
-
-input CreateConversationInput {
-  id: ID!
 }
 
 input AddParticipantInput {
