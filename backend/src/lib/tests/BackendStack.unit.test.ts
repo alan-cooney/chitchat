@@ -6,8 +6,10 @@ import BackendStack from "../BackendStack";
 const app = new App();
 const stack = new BackendStack(app, "test");
 
+jest.mock("child_process");
+
 it("creates a dynamodb table", () => {
-  expect(stack).toHaveResourceLike("AWS::DynamoDB::Table", {
+  expect(stack).toHaveResource("AWS::DynamoDB::Table", {
     BillingMode: "PAY_PER_REQUEST",
     KeySchema: [
       {
@@ -26,6 +28,10 @@ it("creates a dynamodb table", () => {
       StreamViewType: "NEW_AND_OLD_IMAGES",
     },
   });
+});
+
+it("creates the API schema", () => {
+  expect(stack).toHaveResource("AWS::AppSync::GraphQLSchema");
 });
 
 it("creates resources matching the snapshot", () => {

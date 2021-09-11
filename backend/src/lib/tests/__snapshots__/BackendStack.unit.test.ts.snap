@@ -3,6 +3,112 @@
 exports[`creates resources matching the snapshot 1`] = `
 Object {
   "Resources": Object {
+    "apiC8550315": Object {
+      "Properties": Object {
+        "AuthenticationType": "API_KEY",
+        "Name": "test",
+      },
+      "Type": "AWS::AppSync::GraphQLApi",
+    },
+    "apiDefaultApiKey6AB8D7C4": Object {
+      "DependsOn": Array [
+        "apiSchema0EA92056",
+      ],
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+      },
+      "Type": "AWS::AppSync::ApiKey",
+    },
+    "apiSchema0EA92056": Object {
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+        "Definition": "schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+input AddMessageInput {
+  id: ID!
+  conversationID: ID!
+  text: String!
+}
+
+input AddMessageSubscriptionInput {
+  conversationID: ID!
+}
+
+input AddParticipantInput {
+  conversationID: ID!
+  userID: ID!
+}
+
+input AddedParticipantSubscriptionInput {
+  userID: ID!
+}
+
+type Conversation implements Node {
+  id: ID!
+  participants: [User!]!
+  messages(limit: Int!, nextKey: String!): [Message!]!
+}
+
+input CreateConversationInput {
+  id: ID!
+}
+
+type Message implements Node {
+  id: ID!
+  conversation: Conversation!
+  text: String!
+}
+
+type Mutation {
+  createConversation(input: CreateConversationInput!): Conversation!
+  addParticipant(input: AddParticipantInput!): Conversation!
+  addMessage(input: AddMessageInput!): Message!
+}
+
+interface Node {
+  id: ID!
+}
+
+type Participant {
+  conversation: Conversation!
+  user: User!
+}
+
+type Query {
+  user: User!
+}
+
+type Subscription {
+  addedParticipant(input: AddedParticipantSubscriptionInput!): Conversation! @aws_subscribe(mutations: [\\"addParticipant\\"])
+  addedMessage(input: AddMessageSubscriptionInput!): Message! @aws_subscribe(mutations: [\\"addMessage\\"])
+}
+
+type User implements Node {
+  id: ID!
+  givenName: String!
+  familyName: String!
+  email: String!
+  phone: String!
+  conversations(limit: Int!, nextKey: String!): [Conversation!]!
+}
+",
+      },
+      "Type": "AWS::AppSync::GraphQLSchema",
+    },
     "table8235A42E": Object {
       "DeletionPolicy": "Retain",
       "Properties": Object {
