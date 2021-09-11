@@ -1,0 +1,11 @@
+.cache
+.cdk.staging/
+.eslintcache
+.parcel-cache/
+**/*/.build
+cdk.out/
+coverage/
+dist/
+node_modules/
+schemas/.combined/combined.graphql
+tsconfig.tsbuildinfo
