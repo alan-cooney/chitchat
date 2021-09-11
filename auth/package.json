@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "a0deploy": "a0deploy",
+    "deployDev": "a0deploy import --input_file tenant.yaml --config_file ./config/dev.json",
     "deployProd": "a0deploy import --input_file tenant.yaml --config_file ./config/prod.json"
   },
   "devDependencies": {
