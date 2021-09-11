@@ -1,0 +1,54 @@
+name: Deploy to Auth0
+
+env:
+  working-directory: "auth"
+  aws-default-region: "eu-west-1"
+
+on:
+  push:
+    branches: 
+      - master
+    paths:
+      - "auth/**"
+  pull_request:
+    branches: 
+      - master
+    paths:
+      - "auth/**"
+
+jobs:
+  deploy-dev:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download files from the current repository
+        uses: actions/checkout@v2
+      - name: Install Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      - name: Install Dependencies
+        run: yarn install
+        working-directory: ${{env.working-directory}}
+      - name: Import changes to the Auth0 account
+        env:
+          AUTH0_CLIENT_SECRET: ${{ secrets.DEV_AUTH0_CLIENT_SECRET }}
+        run: yarn deployDev
+        
+  deploy-prod:
+    if: github.event_name == 'push' # Push/merge only, not on PR
+    runs-on: ubuntu-latest
+    needs: [deploy-dev]
+    steps:
+      - name: Download files from the current repository
+        uses: actions/checkout@v2
+      - name: Install Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      - name: Install Dependencies
+        run: yarn install
+        working-directory: ${{env.working-directory}}
+      - name: Import changes to the Auth0 account
+        env:
+          AUTH0_CLIENT_SECRET: ${{ secrets.PROD_AUTH0_CLIENT_SECRET }}
+        run: yarn deployProd
