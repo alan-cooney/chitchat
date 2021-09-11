@@ -5,24 +5,10 @@ Object {
   "Resources": Object {
     "apiC8550315": Object {
       "Properties": Object {
-        "AuthenticationType": "API_KEY",
+        "AuthenticationType": "AWS_IAM",
         "Name": "test",
       },
       "Type": "AWS::AppSync::GraphQLApi",
-    },
-    "apiDefaultApiKey6AB8D7C4": Object {
-      "DependsOn": Array [
-        "apiSchema0EA92056",
-      ],
-      "Properties": Object {
-        "ApiId": Object {
-          "Fn::GetAtt": Array [
-            "apiC8550315",
-            "ApiId",
-          ],
-        },
-      },
-      "Type": "AWS::AppSync::ApiKey",
     },
     "apiSchema0EA92056": Object {
       "Properties": Object {
@@ -39,8 +25,9 @@ Object {
 }
 
 input AddMessageInput {
-  id: ID!
+  userID: ID!
   conversationID: ID!
+  organizationID: ID!
   text: String!
 }
 
@@ -50,6 +37,7 @@ input AddMessageSubscriptionInput {
 
 input AddParticipantInput {
   conversationID: ID!
+  organizationID: ID!
   userID: ID!
 }
 
@@ -63,8 +51,10 @@ type Conversation implements Node {
   messages(limit: Int!, nextKey: String!): [Message!]!
 }
 
-input CreateConversationInput {
-  id: ID!
+enum EntityType {
+  USER
+  PARTICIPANT
+  MESSAGE
 }
 
 type Message implements Node {
@@ -74,9 +64,9 @@ type Message implements Node {
 }
 
 type Mutation {
-  createConversation(input: CreateConversationInput!): Conversation!
-  addParticipant(input: AddParticipantInput!): Conversation!
   addMessage(input: AddMessageInput!): Message!
+  addParticipant(input: AddParticipantInput!): Conversation!
+  updateUser(input: UpdateUserInput!): User!
 }
 
 interface Node {
@@ -89,7 +79,8 @@ type Participant {
 }
 
 type Query {
-  user: User!
+  user(id: ID!, organization: ID!): User!
+  conversation(id: ID!, organization: ID!): Conversation!
 }
 
 type Subscription {
@@ -97,17 +88,253 @@ type Subscription {
   addedMessage(input: AddMessageSubscriptionInput!): Message! @aws_subscribe(mutations: [\\"addMessage\\"])
 }
 
+input UpdateUserInput {
+  email: AWSEmail
+  familyName: String
+  givenName: String!
+  id: ID!
+  organizationID: ID!
+  phone: AWSPhone
+}
+
 type User implements Node {
   id: ID!
   givenName: String!
-  familyName: String!
-  email: String!
-  phone: String!
+  familyName: String
+  email: String
+  phone: String
   conversations(limit: Int!, nextKey: String!): [Conversation!]!
 }
 ",
       },
       "Type": "AWS::AppSync::GraphQLSchema",
+    },
+    "apitableDataSourceCFD298C7": Object {
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+        "DynamoDBConfig": Object {
+          "AwsRegion": Object {
+            "Ref": "AWS::Region",
+          },
+          "TableName": Object {
+            "Ref": "table8235A42E",
+          },
+        },
+        "Name": "tableDataSource",
+        "ServiceRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "apitableDataSourceServiceRole08EE8DB4",
+            "Arn",
+          ],
+        },
+        "Type": "AMAZON_DYNAMODB",
+      },
+      "Type": "AWS::AppSync::DataSource",
+    },
+    "apitableDataSourceMutationaddMessageResolverDB6D8CD5": Object {
+      "DependsOn": Array [
+        "apiSchema0EA92056",
+        "apitableDataSourceCFD298C7",
+      ],
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+        "DataSourceName": "tableDataSource",
+        "FieldName": "addMessage",
+        "Kind": "UNIT",
+        "RequestMappingTemplate": "
+      #set($input = {
+          \\"conversationID\\": $context.args.input.conversationID,
+          \\"userID\\": $context.args.input.userID,
+          \\"organizationID\\": $context.args.input.organizationID,
+          \\"id\\": $util.autoId(),
+          \\"type\\": \\"MESSAGE\\"
+        })
+      
+      {
+        \\"version\\": \\"2017-02-28\\",
+        \\"operation\\": \\"PutItem\\",
+        \\"key\\" : {
+      \\"pk\\" : $util.dynamodb.toDynamoDBJson(\\"ORG#$ctx.args.input.organizationID#CONV#$ctx.args.input.id\\"),\\"sk\\" : $util.dynamodb.toDynamoDBJson(\\"CREATED#$util.time.nowEpochSeconds()#MSG#$input.id\\")
+    },
+        \\"attributeValues\\": $util.dynamodb.toMapValuesJson($input)
+      }",
+        "ResponseMappingTemplate": "$util.toJson($ctx.result)",
+        "TypeName": "Mutation",
+      },
+      "Type": "AWS::AppSync::Resolver",
+    },
+    "apitableDataSourceMutationaddParticipantResolverD635E16E": Object {
+      "DependsOn": Array [
+        "apiSchema0EA92056",
+        "apitableDataSourceCFD298C7",
+      ],
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+        "DataSourceName": "tableDataSource",
+        "FieldName": "addParticipant",
+        "Kind": "UNIT",
+        "RequestMappingTemplate": "
+      #set($input = {
+          \\"conversationID\\": $context.args.input.conversationID,
+          \\"userID\\": $context.args.input.userID,
+          \\"organizationID\\": $context.args.input.organizationID,
+          \\"type\\": \\"PARTICIPANT\\"
+        })
+      
+      {
+        \\"version\\": \\"2017-02-28\\",
+        \\"operation\\": \\"PutItem\\",
+        \\"key\\" : {
+      \\"pk\\" : $util.dynamodb.toDynamoDBJson(\\"ORG#$ctx.args.input.organizationID#USER#$ctx.args.input.userID\\"),\\"sk\\" : $util.dynamodb.toDynamoDBJson(\\"UPDATED#$util.time.nowEpochSeconds()#CONV#$ctx.args.input.conversationID\\")
+    },
+        \\"attributeValues\\": $util.dynamodb.toMapValuesJson($input)
+      }",
+        "ResponseMappingTemplate": "$util.toJson($ctx.result)",
+        "TypeName": "Mutation",
+      },
+      "Type": "AWS::AppSync::Resolver",
+    },
+    "apitableDataSourceMutationupdateUserResolver63DBAD87": Object {
+      "DependsOn": Array [
+        "apiSchema0EA92056",
+        "apitableDataSourceCFD298C7",
+      ],
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+        "DataSourceName": "tableDataSource",
+        "FieldName": "updateUser",
+        "Kind": "UNIT",
+        "RequestMappingTemplate": "
+      #set($input = {
+          \\"id\\": $context.args.input.id,
+          \\"givenName\\": $context.args.input.givenName,
+          \\"familyName\\": $context.args.input.familyName,
+          \\"phone\\": $context.args.input.phone,
+          \\"email\\": $context.args.input.email,
+          \\"organizationID\\": $context.args.input.organizationID,
+          \\"type\\": \\"USER\\"
+        })
+      
+      {
+        \\"version\\": \\"2017-02-28\\",
+        \\"operation\\": \\"PutItem\\",
+        \\"key\\" : {
+      \\"pk\\" : $util.dynamodb.toDynamoDBJson(\\"ORG#$ctx.args.input.organizationID#USER#$ctx.args.input.id\\"),\\"sk\\" : $util.dynamodb.toDynamoDBJson(\\"USER#$ctx.args.input.id\\")
+    },
+        \\"attributeValues\\": $util.dynamodb.toMapValuesJson($input)
+      }",
+        "ResponseMappingTemplate": "$util.toJson($ctx.result)",
+        "TypeName": "Mutation",
+      },
+      "Type": "AWS::AppSync::Resolver",
+    },
+    "apitableDataSourceQueryuserResolver4A437C3B": Object {
+      "DependsOn": Array [
+        "apiSchema0EA92056",
+        "apitableDataSourceCFD298C7",
+      ],
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+        "DataSourceName": "tableDataSource",
+        "FieldName": "user",
+        "Kind": "UNIT",
+        "RequestMappingTemplate": "{\\"version\\" : \\"2017-02-28\\", \\"operation\\" : \\"Query\\", \\"expression\\": \\"#pk = :pk\\",
+           \\"expressionAttributeNames\\": {
+              \\"#pk\\": \\"pk\\",
+            },
+           \\"expressionAttributeValues\\": {
+              \\":pk\\": \\"ORG#$ctx.args.organizationID#USER#$ctx.args.id\\",
+            }
+          }",
+        "ResponseMappingTemplate": "$util.toJson($ctx.result.items.get(0))",
+        "TypeName": "Query",
+      },
+      "Type": "AWS::AppSync::Resolver",
+    },
+    "apitableDataSourceServiceRole08EE8DB4": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "appsync.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "apitableDataSourceServiceRoleDefaultPolicy33FDDB21": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "table8235A42E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "apitableDataSourceServiceRoleDefaultPolicy33FDDB21",
+        "Roles": Array [
+          Object {
+            "Ref": "apitableDataSourceServiceRole08EE8DB4",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
     },
     "table8235A42E": Object {
       "DeletionPolicy": "Retain",
