@@ -1,5 +1,5 @@
 #
-# AWS Directive setup (for code-generation only)
+# AWS Setup (for code-generation only)
 #
 # This is designed to help avoid errors with code generation (e.g. 'directive
 # not found'). It should not be uploaded to AWS Appsync as it will cause that
@@ -7,3 +7,18 @@
 #
 
 directive @aws_subscribe(mutations: [String!]!) on FIELD_DEFINITION
+directive @aws_iam on OBJECT | FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+directive @aws_cognito_user_pools(
+  cognito_groups: [String]
+) on OBJECT | FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+directive @aws_api_key on OBJECT | FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+
+scalar AWSDate
+scalar AWSTime
+scalar AWSDateTime
+scalar AWSTimestamp
+scalar AWSEmail
+scalar AWSJSON
+scalar AWSURL
+scalar AWSPhone
+scalar AWSIPAddress
