@@ -16,7 +16,7 @@ export default class BackendStack extends Stack {
     // Code-generate the Appsync-suitable schema before continuing
     spawnSync("graphql-codegen");
 
-    new Table(this, "table", {
+    const table = new Table(this, "table", {
       billingMode: BillingMode.PAY_PER_REQUEST,
       partitionKey: {
         name: "pk",
@@ -30,11 +30,13 @@ export default class BackendStack extends Stack {
       stream: StreamViewType.NEW_AND_OLD_IMAGES,
     });
 
-    new GraphqlApi(this, "api", {
+    const api = new GraphqlApi(this, "api", {
       name: id,
       schema: Schema.fromAsset(
         join(__dirname, "../../dist/graphql-codegen/combined.graphql")
       ),
     });
+
+    api.addDynamoDbDataSource("tableDataSource", table);
   }
 }
