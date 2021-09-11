@@ -155,5 +155,16 @@ export default class BackendStack extends Stack {
         "$util.toJson($ctx.result.items.get(0))"
       ),
     });
+
+    tableDS.createResolver({
+      typeName: "Query",
+      fieldName: "conversation",
+      requestMappingTemplate: MappingTemplate.fromString(
+        JSON.stringify({ id: "$context.args.id" })
+      ),
+      responseMappingTemplate: MappingTemplate.fromString(
+        "$util.toJson($ctx.result)"
+      ),
+    });
   }
 }
