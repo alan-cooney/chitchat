@@ -7,14 +7,12 @@
     #if($util.isNullOrEmpty($ctx.args.limit) == false)
         "limit" : $ctx.args.limit,
     #end
-    "expression": "#pk = :pk and begins_with(#sk, :skPrefix)",
+    "expression": "#pk = :pk",
     "expressionAttributeNames": {
-        "#pk": "pk",
-        "#sk": "sk"
+        "#pk": "pk"
     },
     "expressionAttributeValues": {
-        ":pk": "ORG#$ctx.source.organizationID#CONV#$ctx.source.id",
-        "skPrefix": "MSG"
+        ":pk": "APP#$ctx.source.appID#USER#$ctx.source.id"
     },
     "scanIndexForward": false
 }

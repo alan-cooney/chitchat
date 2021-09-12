@@ -1,0 +1,231 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`creates resources matching the snapshot 1`] = `
+Object {
+  "Resources": Object {
+    "apiC8550315": Object {
+      "Properties": Object {
+        "AuthenticationType": "API_KEY",
+        "Name": "test",
+      },
+      "Type": "AWS::AppSync::GraphQLApi",
+    },
+    "apiDefaultApiKey6AB8D7C4": Object {
+      "DependsOn": Array [
+        "apiSchema0EA92056",
+      ],
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+      },
+      "Type": "AWS::AppSync::ApiKey",
+    },
+    "apiSchema0EA92056": Object {
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+        "Definition": "",
+      },
+      "Type": "AWS::AppSync::GraphQLSchema",
+    },
+    "apiconversationTableDataSourceF25AD297": Object {
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+        "DynamoDBConfig": Object {
+          "AwsRegion": Object {
+            "Ref": "AWS::Region",
+          },
+          "TableName": Object {
+            "Ref": "conversationTable542DF655",
+          },
+        },
+        "Name": "conversationTableDataSource",
+        "ServiceRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "apiconversationTableDataSourceServiceRole69D326C3",
+            "Arn",
+          ],
+        },
+        "Type": "AMAZON_DYNAMODB",
+      },
+      "Type": "AWS::AppSync::DataSource",
+    },
+    "apiconversationTableDataSourceMutationaddMessageResolver6F7CDE24": Object {
+      "DependsOn": Array [
+        "apiconversationTableDataSourceF25AD297",
+        "apiSchema0EA92056",
+      ],
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+        "DataSourceName": "conversationTableDataSource",
+        "FieldName": "addMessage",
+        "Kind": "UNIT",
+        "RequestMappingTemplate": "#set($input = $context.args.input)
+#set($uuid = $util.autoId())
+#set($shortUUID = $uuid.substring(8))
+#set($id = \\"$util.time.nowEpochSeconds()$shortUUID\\")
+
+{
+    \\"version\\": \\"2017-02-28\\",
+    \\"operation\\": \\"PutItem\\",
+    \\"key\\" : {
+        \\"pk\\": $util.dynamodb.toDynamoDBJson(\\"APP#$ctx.args.input.appID#CONV#$ctx.args.input.conversationID\\"),
+        \\"id\\": $util.dynamodb.toDynamoDBJson($id)
+    },
+    \\"attributeValues\\": $util.dynamodb.toMapValuesJson($input)
+}",
+        "ResponseMappingTemplate": "$util.toJson($ctx.result)",
+        "TypeName": "Mutation",
+      },
+      "Type": "AWS::AppSync::Resolver",
+    },
+    "apiconversationTableDataSourceParticipantconversationResolver4E52AED7": Object {
+      "DependsOn": Array [
+        "apiconversationTableDataSourceF25AD297",
+        "apiSchema0EA92056",
+      ],
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+        "DataSourceName": "conversationTableDataSource",
+        "FieldName": "conversation",
+        "Kind": "UNIT",
+        "RequestMappingTemplate": "{
+    \\"version\\" : \\"2017-02-28\\",
+    \\"operation\\" : \\"Query\\",
+    #if($util.isNullOrEmpty($ctx.args.nextToken) == false)
+        \\"nextToken\\" : \\"$ctx.args.nextToken\\",
+    #end
+    #if($util.isNullOrEmpty($ctx.args.limit) == false)
+        \\"limit\\" : $ctx.args.limit,
+    #end
+    \\"expression\\": \\"#pk = :pk\\",
+    \\"expressionAttributeNames\\": {
+        \\"#pk\\": \\"pk\\"
+    },
+    \\"expressionAttributeValues\\": {
+        \\":pk\\": \\"APP#$ctx.source.appID#USER#$ctx.source.id\\"
+    },
+    \\"scanIndexForward\\": false
+}",
+        "ResponseMappingTemplate": "$util.toJson($ctx.result)",
+        "TypeName": "Participant",
+      },
+      "Type": "AWS::AppSync::Resolver",
+    },
+    "apiconversationTableDataSourceServiceRole69D326C3": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "appsync.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "apiconversationTableDataSourceServiceRoleDefaultPolicy67B6F07F": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "conversationTable542DF655",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "apiconversationTableDataSourceServiceRoleDefaultPolicy67B6F07F",
+        "Roles": Array [
+          Object {
+            "Ref": "apiconversationTableDataSourceServiceRole69D326C3",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "conversationTable542DF655": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "AttributeDefinitions": Array [
+          Object {
+            "AttributeName": "pk",
+            "AttributeType": "S",
+          },
+          Object {
+            "AttributeName": "id",
+            "AttributeType": "S",
+          },
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "KeySchema": Array [
+          Object {
+            "AttributeName": "pk",
+            "KeyType": "HASH",
+          },
+          Object {
+            "AttributeName": "id",
+            "KeyType": "RANGE",
+          },
+        ],
+        "PointInTimeRecoverySpecification": Object {
+          "PointInTimeRecoveryEnabled": true,
+        },
+      },
+      "Type": "AWS::DynamoDB::Table",
+      "UpdateReplacePolicy": "Retain",
+    },
+  },
+}
+`;

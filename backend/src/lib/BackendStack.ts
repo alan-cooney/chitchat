@@ -11,6 +11,7 @@ import { spawnSync } from "child_process";
 import User from "./resources/user/User";
 import Conversation from "./resources/conversation/Conversation";
 import Participant from "./resources/participant/Participant";
+import Message from "./resources/message/Message";
 
 export default class BackendStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -41,5 +42,7 @@ export default class BackendStack extends Stack {
     new Conversation(this, api);
 
     new Participant(this, api);
+
+    new Message(this, api);
   }
 }
