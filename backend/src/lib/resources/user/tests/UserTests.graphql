@@ -1,0 +1,19 @@
+mutation UpdateUserTest($input: UpdateUserInput!) {
+  updateUser(input: $input) {
+    id
+    givenName
+    familyName
+    email
+    phone
+  }
+}
+
+query QueryUserTest($appID: ID!, $id: ID!) {
+  user(appID: $appID, id: $id) {
+    id
+    givenName
+    familyName
+    email
+    phone
+  }
+}

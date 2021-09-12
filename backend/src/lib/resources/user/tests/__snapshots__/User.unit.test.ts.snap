@@ -1,0 +1,229 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`creates resources matching the snapshot 1`] = `
+Object {
+  "Resources": Object {
+    "apiC8550315": Object {
+      "Properties": Object {
+        "AuthenticationType": "API_KEY",
+        "Name": "test",
+      },
+      "Type": "AWS::AppSync::GraphQLApi",
+    },
+    "apiDefaultApiKey6AB8D7C4": Object {
+      "DependsOn": Array [
+        "apiSchema0EA92056",
+      ],
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+      },
+      "Type": "AWS::AppSync::ApiKey",
+    },
+    "apiSchema0EA92056": Object {
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+        "Definition": "",
+      },
+      "Type": "AWS::AppSync::GraphQLSchema",
+    },
+    "apiuserTableDataSourceA066116E": Object {
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+        "DynamoDBConfig": Object {
+          "AwsRegion": Object {
+            "Ref": "AWS::Region",
+          },
+          "TableName": Object {
+            "Ref": "userTableA39440AD",
+          },
+        },
+        "Name": "userTableDataSource",
+        "ServiceRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "apiuserTableDataSourceServiceRole30F51588",
+            "Arn",
+          ],
+        },
+        "Type": "AMAZON_DYNAMODB",
+      },
+      "Type": "AWS::AppSync::DataSource",
+    },
+    "apiuserTableDataSourceMutationupdateUserResolver3BE1D95C": Object {
+      "DependsOn": Array [
+        "apiSchema0EA92056",
+        "apiuserTableDataSourceA066116E",
+      ],
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+        "DataSourceName": "userTableDataSource",
+        "FieldName": "updateUser",
+        "Kind": "UNIT",
+        "RequestMappingTemplate": "#set($input = $context.args.input)
+
+{
+    \\"version\\": \\"2017-02-28\\",
+    \\"operation\\": \\"PutItem\\",
+    \\"key\\" : {
+        \\"pk\\" : $util.dynamodb.toDynamoDBJson(\\"APP#$ctx.args.input.appID#USER#$ctx.args.input.id\\")
+    },
+    \\"attributeValues\\": $util.dynamodb.toMapValuesJson($input)
+}",
+        "ResponseMappingTemplate": "$util.toJson($ctx.result)",
+        "TypeName": "Mutation",
+      },
+      "Type": "AWS::AppSync::Resolver",
+    },
+    "apiuserTableDataSourceParticipantuserResolver7FFE0844": Object {
+      "DependsOn": Array [
+        "apiSchema0EA92056",
+        "apiuserTableDataSourceA066116E",
+      ],
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+        "DataSourceName": "userTableDataSource",
+        "FieldName": "user",
+        "Kind": "UNIT",
+        "RequestMappingTemplate": "/home/alan/repos/chitchat/backend/src/lib/velocity/participantUserRequest.vtl",
+        "ResponseMappingTemplate": "$util.toJson($ctx.result)",
+        "TypeName": "Participant",
+      },
+      "Type": "AWS::AppSync::Resolver",
+    },
+    "apiuserTableDataSourceQueryuserResolverCC9158BC": Object {
+      "DependsOn": Array [
+        "apiSchema0EA92056",
+        "apiuserTableDataSourceA066116E",
+      ],
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+        "DataSourceName": "userTableDataSource",
+        "FieldName": "user",
+        "Kind": "UNIT",
+        "RequestMappingTemplate": "{
+    \\"version\\": \\"2017-02-28\\",
+    \\"operation\\": \\"GetItem\\",
+    \\"key\\": {
+        \\":pk\\": \\"APP#$ctx.args.appID#USER#$ctx.args.id\\"
+    }
+}",
+        "ResponseMappingTemplate": "$util.toJson($ctx.result)",
+        "TypeName": "Query",
+      },
+      "Type": "AWS::AppSync::Resolver",
+    },
+    "apiuserTableDataSourceServiceRole30F51588": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "appsync.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "apiuserTableDataSourceServiceRoleDefaultPolicyB739E08E": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "userTableA39440AD",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "apiuserTableDataSourceServiceRoleDefaultPolicyB739E08E",
+        "Roles": Array [
+          Object {
+            "Ref": "apiuserTableDataSourceServiceRole30F51588",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "userTableA39440AD": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "AttributeDefinitions": Array [
+          Object {
+            "AttributeName": "pk",
+            "AttributeType": "S",
+          },
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "KeySchema": Array [
+          Object {
+            "AttributeName": "pk",
+            "KeyType": "HASH",
+          },
+        ],
+        "PointInTimeRecoverySpecification": Object {
+          "PointInTimeRecoveryEnabled": true,
+        },
+      },
+      "Type": "AWS::DynamoDB::Table",
+      "UpdateReplacePolicy": "Retain",
+    },
+  },
+}
+`;

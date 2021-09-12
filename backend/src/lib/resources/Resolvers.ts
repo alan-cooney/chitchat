@@ -32,28 +32,9 @@ export default class Resolvers {
       responseMappingTemplate: MappingTemplate.dynamoDbResultItem(),
     });
 
-    tableDS.createResolver({
-      typeName: "Mutation",
-      fieldName: "updateUser",
-      requestMappingTemplate: MappingTemplate.fromFile(
-        join(__dirname, "../../velocity/updateUserRequest.vtl")
-      ),
-      responseMappingTemplate: MappingTemplate.dynamoDbResultItem(),
-    });
-
     /**
      * Queries
      */
-    tableDS.createResolver({
-      typeName: "Query",
-      fieldName: "user",
-      requestMappingTemplate: MappingTemplate.fromFile(
-        join(__dirname, "../../velocity/userRequest.vtl")
-      ),
-      responseMappingTemplate: MappingTemplate.fromFile(
-        join(__dirname, "../../velocity/querySingleItemResponse.vtl")
-      ),
-    });
 
     tableDS.createResolver({
       typeName: "Query",

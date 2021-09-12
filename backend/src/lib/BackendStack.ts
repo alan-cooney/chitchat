@@ -9,6 +9,7 @@ import { AuthorizationType, GraphqlApi, Schema } from "@aws-cdk/aws-appsync";
 import { join } from "path";
 import { spawnSync } from "child_process";
 import Resolvers from "./resources/Resolvers";
+import User from "./resources/user/User";
 
 export default class BackendStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -50,6 +51,6 @@ export default class BackendStack extends Stack {
 
     const tableDS = api.addDynamoDbDataSource("tableDataSource", table);
 
-    new Resolvers(this, tableDS);
+    new User(this, api);
   }
 }
