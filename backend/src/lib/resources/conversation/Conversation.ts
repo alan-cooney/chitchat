@@ -3,9 +3,6 @@ import { AttributeType, BillingMode, Table } from "@aws-cdk/aws-dynamodb";
 import { Construct } from "@aws-cdk/core";
 import { join } from "path";
 
-/**
- * User Functionality
- */
 export default class Conversation {
   constructor(scope: Construct, api: IGraphqlApi) {
     const id = "conversation";
@@ -14,7 +11,7 @@ export default class Conversation {
     const table = new Table(scope, `${id}Table`, {
       billingMode: BillingMode.PAY_PER_REQUEST,
       partitionKey: {
-        name: "pk", // Will be {{app-id}}#{{conv-id}}
+        name: "pk", // Will be APP#{{app-id}}#CONV#{{conv-id}}
         type: AttributeType.STRING,
       },
       pointInTimeRecovery: true,

@@ -14,7 +14,7 @@ export default class User {
     const table = new Table(scope, `${id}Table`, {
       billingMode: BillingMode.PAY_PER_REQUEST,
       partitionKey: {
-        name: "pk", // Will be {{app-id}}#{{user-id}}
+        name: "pk", // Will be APP#{{app-id}}#USER#{{user-id}}
         type: AttributeType.STRING,
       },
       pointInTimeRecovery: true,
