@@ -1,0 +1,13 @@
+#set($input = $context.args.input)
+#set($input.type = "MESSAGE")
+#set($input.id = $util.autoId())
+
+{
+    "version": "2017-02-28",
+    "operation": "PutItem",
+    "key" : {
+        "pk" : $util.dynamodb.toDynamoDBJson("ORG#$ctx.args.input.organizationID#CONV#$ctx.args.input.id"),
+        "sk" : $util.dynamodb.toDynamoDBJson("CONV#$util.time.nowEpochSeconds()#MSG#$input.id")
+    },
+    "attributeValues": $util.dynamodb.toMapValuesJson($input)
+}

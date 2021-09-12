@@ -5,10 +5,24 @@ Object {
   "Resources": Object {
     "apiC8550315": Object {
       "Properties": Object {
-        "AuthenticationType": "AWS_IAM",
+        "AuthenticationType": "API_KEY",
         "Name": "test",
       },
       "Type": "AWS::AppSync::GraphQLApi",
+    },
+    "apiDefaultApiKey6AB8D7C4": Object {
+      "DependsOn": Array [
+        "apiSchema0EA92056",
+      ],
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+      },
+      "Type": "AWS::AppSync::ApiKey",
     },
     "apiSchema0EA92056": Object {
       "Properties": Object {
@@ -18,94 +32,7 @@ Object {
             "ApiId",
           ],
         },
-        "Definition": "schema {
-  query: Query
-  mutation: Mutation
-  subscription: Subscription
-}
-
-input AddMessageInput {
-  userID: ID!
-  conversationID: ID!
-  organizationID: ID!
-  text: String!
-}
-
-input AddMessageSubscriptionInput {
-  conversationID: ID!
-}
-
-input AddParticipantInput {
-  conversationID: ID!
-  organizationID: ID!
-  userID: ID!
-}
-
-input AddedParticipantSubscriptionInput {
-  userID: ID!
-}
-
-type Conversation implements Node {
-  id: ID!
-  participants: [User!]!
-  messages(limit: Int!, nextKey: String!): [Message!]!
-}
-
-enum EntityType {
-  USER
-  PARTICIPANT
-  MESSAGE
-}
-
-type Message implements Node {
-  id: ID!
-  conversation: Conversation!
-  text: String!
-}
-
-type Mutation {
-  addMessage(input: AddMessageInput!): Message!
-  addParticipant(input: AddParticipantInput!): Conversation!
-  updateUser(input: UpdateUserInput!): User!
-}
-
-interface Node {
-  id: ID!
-}
-
-type Participant {
-  conversation: Conversation!
-  user: User!
-}
-
-type Query {
-  user(id: ID!, organization: ID!): User!
-  conversation(id: ID!, organization: ID!): Conversation!
-}
-
-type Subscription {
-  addedParticipant(input: AddedParticipantSubscriptionInput!): Conversation! @aws_subscribe(mutations: [\\"addParticipant\\"])
-  addedMessage(input: AddMessageSubscriptionInput!): Message! @aws_subscribe(mutations: [\\"addMessage\\"])
-}
-
-input UpdateUserInput {
-  email: AWSEmail
-  familyName: String
-  givenName: String!
-  id: ID!
-  organizationID: ID!
-  phone: AWSPhone
-}
-
-type User implements Node {
-  id: ID!
-  givenName: String!
-  familyName: String
-  email: String
-  phone: String
-  conversations(limit: Int!, nextKey: String!): [Conversation!]!
-}
-",
+        "Definition": "",
       },
       "Type": "AWS::AppSync::GraphQLSchema",
     },
@@ -151,23 +78,19 @@ type User implements Node {
         "DataSourceName": "tableDataSource",
         "FieldName": "addMessage",
         "Kind": "UNIT",
-        "RequestMappingTemplate": "
-      #set($input = {
-          \\"conversationID\\": $context.args.input.conversationID,
-          \\"userID\\": $context.args.input.userID,
-          \\"organizationID\\": $context.args.input.organizationID,
-          \\"id\\": $util.autoId(),
-          \\"type\\": \\"MESSAGE\\"
-        })
-      
-      {
-        \\"version\\": \\"2017-02-28\\",
-        \\"operation\\": \\"PutItem\\",
-        \\"key\\" : {
-      \\"pk\\" : $util.dynamodb.toDynamoDBJson(\\"ORG#$ctx.args.input.organizationID#CONV#$ctx.args.input.id\\"),\\"sk\\" : $util.dynamodb.toDynamoDBJson(\\"CREATED#$util.time.nowEpochSeconds()#MSG#$input.id\\")
+        "RequestMappingTemplate": "#set($input = $context.args.input)
+#set($input.type = \\"MESSAGE\\")
+#set($input.id = $util.autoId())
+
+{
+    \\"version\\": \\"2017-02-28\\",
+    \\"operation\\": \\"PutItem\\",
+    \\"key\\" : {
+        \\"pk\\" : $util.dynamodb.toDynamoDBJson(\\"ORG#$ctx.args.input.organizationID#CONV#$ctx.args.input.id\\"),
+        \\"sk\\" : $util.dynamodb.toDynamoDBJson(\\"CREATED#$util.time.nowEpochSeconds()#MSG#$input.id\\")
     },
-        \\"attributeValues\\": $util.dynamodb.toMapValuesJson($input)
-      }",
+    \\"attributeValues\\": $util.dynamodb.toMapValuesJson($input)
+}",
         "ResponseMappingTemplate": "$util.toJson($ctx.result)",
         "TypeName": "Mutation",
       },
@@ -188,22 +111,18 @@ type User implements Node {
         "DataSourceName": "tableDataSource",
         "FieldName": "addParticipant",
         "Kind": "UNIT",
-        "RequestMappingTemplate": "
-      #set($input = {
-          \\"conversationID\\": $context.args.input.conversationID,
-          \\"userID\\": $context.args.input.userID,
-          \\"organizationID\\": $context.args.input.organizationID,
-          \\"type\\": \\"PARTICIPANT\\"
-        })
-      
-      {
-        \\"version\\": \\"2017-02-28\\",
-        \\"operation\\": \\"PutItem\\",
-        \\"key\\" : {
-      \\"pk\\" : $util.dynamodb.toDynamoDBJson(\\"ORG#$ctx.args.input.organizationID#USER#$ctx.args.input.userID\\"),\\"sk\\" : $util.dynamodb.toDynamoDBJson(\\"UPDATED#$util.time.nowEpochSeconds()#CONV#$ctx.args.input.conversationID\\")
+        "RequestMappingTemplate": "#set($input = $context.args.input)
+#set($input.type = \\"PARTICIPANT\\")
+
+{
+    \\"version\\": \\"2017-02-28\\",
+    \\"operation\\": \\"PutItem\\",
+    \\"key\\" : {
+        \\"pk\\" : $util.dynamodb.toDynamoDBJson(\\"ORG#$ctx.args.input.organizationID#USER#$ctx.args.input.userID\\"),
+        \\"sk\\" : $util.dynamodb.toDynamoDBJson(\\"UPDATED#$util.time.nowEpochSeconds()#CONV#$ctx.args.input.conversationID\\")
     },
-        \\"attributeValues\\": $util.dynamodb.toMapValuesJson($input)
-      }",
+    \\"attributeValues\\": $util.dynamodb.toMapValuesJson($input)
+}",
         "ResponseMappingTemplate": "$util.toJson($ctx.result)",
         "TypeName": "Mutation",
       },
@@ -224,27 +143,42 @@ type User implements Node {
         "DataSourceName": "tableDataSource",
         "FieldName": "updateUser",
         "Kind": "UNIT",
-        "RequestMappingTemplate": "
-      #set($input = {
-          \\"id\\": $context.args.input.id,
-          \\"givenName\\": $context.args.input.givenName,
-          \\"familyName\\": $context.args.input.familyName,
-          \\"phone\\": $context.args.input.phone,
-          \\"email\\": $context.args.input.email,
-          \\"organizationID\\": $context.args.input.organizationID,
-          \\"type\\": \\"USER\\"
-        })
-      
-      {
-        \\"version\\": \\"2017-02-28\\",
-        \\"operation\\": \\"PutItem\\",
-        \\"key\\" : {
-      \\"pk\\" : $util.dynamodb.toDynamoDBJson(\\"ORG#$ctx.args.input.organizationID#USER#$ctx.args.input.id\\"),\\"sk\\" : $util.dynamodb.toDynamoDBJson(\\"USER#$ctx.args.input.id\\")
+        "RequestMappingTemplate": "#set($input = $context.args.input)
+#set($input.type = \\"USER\\")
+
+{
+    \\"version\\": \\"2017-02-28\\",
+    \\"operation\\": \\"PutItem\\",
+    \\"key\\" : {
+        \\"pk\\" : $util.dynamodb.toDynamoDBJson(\\"ORG#$ctx.args.input.organizationID#USER#$ctx.args.input.id\\"),
+        \\"sk\\" : $util.dynamodb.toDynamoDBJson(\\"USER#$ctx.args.input.id\\")
     },
-        \\"attributeValues\\": $util.dynamodb.toMapValuesJson($input)
-      }",
+    \\"attributeValues\\": $util.dynamodb.toMapValuesJson($input)
+}",
         "ResponseMappingTemplate": "$util.toJson($ctx.result)",
         "TypeName": "Mutation",
+      },
+      "Type": "AWS::AppSync::Resolver",
+    },
+    "apitableDataSourceQueryconversationResolverEC1FB87A": Object {
+      "DependsOn": Array [
+        "apiSchema0EA92056",
+        "apitableDataSourceCFD298C7",
+      ],
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+        "DataSourceName": "tableDataSource",
+        "FieldName": "conversation",
+        "Kind": "UNIT",
+        "RequestMappingTemplate": "/home/alan/repos/chitchat/backend/src/velocity/conversationRequest.vtl",
+        "ResponseMappingTemplate": "## Return a single item (the first result) from a query
+$util.toJson($ctx.result.items.get(0))",
+        "TypeName": "Query",
       },
       "Type": "AWS::AppSync::Resolver",
     },
@@ -263,15 +197,19 @@ type User implements Node {
         "DataSourceName": "tableDataSource",
         "FieldName": "user",
         "Kind": "UNIT",
-        "RequestMappingTemplate": "{\\"version\\" : \\"2017-02-28\\", \\"operation\\" : \\"Query\\", \\"expression\\": \\"#pk = :pk\\",
-           \\"expressionAttributeNames\\": {
-              \\"#pk\\": \\"pk\\",
-            },
-           \\"expressionAttributeValues\\": {
-              \\":pk\\": \\"ORG#$ctx.args.organizationID#USER#$ctx.args.id\\",
-            }
-          }",
-        "ResponseMappingTemplate": "$util.toJson($ctx.result.items.get(0))",
+        "RequestMappingTemplate": "{
+    \\"version\\" : \\"2017-02-28\\",
+    \\"operation\\" : \\"Query\\",
+    \\"expression\\": \\"#pk = :pk\\",
+    \\"expressionAttributeNames\\": {
+        \\"#pk\\": \\"pk\\",
+    },
+    \\"expressionAttributeValues\\": {
+        \\":pk\\": \\"ORG#$ctx.args.organizationID#USER#$ctx.args.id\\",
+    }
+}",
+        "ResponseMappingTemplate": "## Return a single item (the first result) from a query
+$util.toJson($ctx.result.items.get(0))",
         "TypeName": "Query",
       },
       "Type": "AWS::AppSync::Resolver",
@@ -344,27 +282,16 @@ type User implements Node {
             "AttributeName": "pk",
             "AttributeType": "S",
           },
-          Object {
-            "AttributeName": "sk",
-            "AttributeType": "S",
-          },
         ],
-        "BillingMode": "PAY_PER_REQUEST",
         "KeySchema": Array [
           Object {
             "AttributeName": "pk",
             "KeyType": "HASH",
           },
-          Object {
-            "AttributeName": "sk",
-            "KeyType": "RANGE",
-          },
         ],
-        "PointInTimeRecoverySpecification": Object {
-          "PointInTimeRecoveryEnabled": true,
-        },
-        "StreamSpecification": Object {
-          "StreamViewType": "NEW_AND_OLD_IMAGES",
+        "ProvisionedThroughput": Object {
+          "ReadCapacityUnits": 5,
+          "WriteCapacityUnits": 5,
         },
       },
       "Type": "AWS::DynamoDB::Table",

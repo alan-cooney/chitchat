@@ -7,6 +7,10 @@ interface Node {
   id: ID!
 }
 
+interface Nodes {
+  nextToken: String
+}
+
 enum EntityType {
   USER
   PARTICIPANT
@@ -33,7 +37,7 @@ type User implements Node
   familyName: String @column
   email: String @column
   phone: String @column
-  conversations(limit: Int!, nextKey: String!): [Conversation!]!
+  conversations(limit: Int!, nextKey: String!): ConversationConnection!
 }
 
 """
@@ -61,6 +65,11 @@ type Conversation implements Node {
   id: ID!
   participants: [User!]!
   messages(limit: Int!, nextKey: String!): [Message!]!
+}
+
+type ConversationConnection implements Nodes {
+  items: [Conversation!]!
+  nextToken: String
 }
 
 """

@@ -5,18 +5,10 @@ import {
   StreamViewType,
   Table,
 } from "@aws-cdk/aws-dynamodb";
-import {
-  Assign,
-  AttributeValues,
-  AuthorizationType,
-  GraphqlApi,
-  KeyCondition,
-  MappingTemplate,
-  PrimaryKey,
-  Schema,
-} from "@aws-cdk/aws-appsync";
+import { AuthorizationType, GraphqlApi, Schema } from "@aws-cdk/aws-appsync";
 import { join } from "path";
 import { spawnSync } from "child_process";
+import Resolvers from "./resources/Resolvers";
 
 export default class BackendStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -58,113 +50,6 @@ export default class BackendStack extends Stack {
 
     const tableDS = api.addDynamoDbDataSource("tableDataSource", table);
 
-    /**
-     * Mutations
-     */
-    tableDS.createResolver({
-      typeName: "Mutation",
-      fieldName: "addMessage",
-      requestMappingTemplate: MappingTemplate.dynamoDbPutItem(
-        new PrimaryKey(
-          new Assign(
-            "pk",
-            '"ORG#$ctx.args.input.organizationID#CONV#$ctx.args.input.id"'
-          ),
-          new Assign(
-            "sk",
-            '"CREATED#$util.time.nowEpochSeconds()#MSG#$input.id"'
-          )
-        ),
-        new AttributeValues(`{
-          "conversationID": $context.args.input.conversationID,
-          "userID": $context.args.input.userID,
-          "organizationID": $context.args.input.organizationID,
-          "id": $util.autoId(),
-          "type": "MESSAGE"
-        }`)
-      ),
-      responseMappingTemplate: MappingTemplate.dynamoDbResultItem(),
-    });
-
-    tableDS.createResolver({
-      typeName: "Mutation",
-      fieldName: "addParticipant",
-      requestMappingTemplate: MappingTemplate.dynamoDbPutItem(
-        new PrimaryKey(
-          new Assign(
-            "pk",
-            '"ORG#$ctx.args.input.organizationID#USER#$ctx.args.input.userID"'
-          ),
-          new Assign(
-            "sk",
-            '"UPDATED#$util.time.nowEpochSeconds()#CONV#$ctx.args.input.conversationID"'
-          )
-        ),
-        new AttributeValues(`{
-          "conversationID": $context.args.input.conversationID,
-          "userID": $context.args.input.userID,
-          "organizationID": $context.args.input.organizationID,
-          "type": "PARTICIPANT"
-        }`)
-      ),
-      responseMappingTemplate: MappingTemplate.dynamoDbResultItem(),
-    });
-
-    tableDS.createResolver({
-      typeName: "Mutation",
-      fieldName: "updateUser",
-      requestMappingTemplate: MappingTemplate.dynamoDbPutItem(
-        new PrimaryKey(
-          new Assign(
-            "pk",
-            '"ORG#$ctx.args.input.organizationID#USER#$ctx.args.input.id"'
-          ),
-          new Assign("sk", '"USER#$ctx.args.input.id"')
-        ),
-        new AttributeValues(`{
-          "id": $context.args.input.id,
-          "givenName": $context.args.input.givenName,
-          "familyName": $context.args.input.familyName,
-          "phone": $context.args.input.phone,
-          "email": $context.args.input.email,
-          "organizationID": $context.args.input.organizationID,
-          "type": "USER"
-        }`)
-      ),
-      responseMappingTemplate: MappingTemplate.dynamoDbResultItem(),
-    });
-
-    /**
-     * Queries
-     */
-    tableDS.createResolver({
-      typeName: "Query",
-      fieldName: "user",
-      requestMappingTemplate: MappingTemplate.dynamoDbQuery({
-        renderTemplate: () =>
-          `"expression": "#pk = :pk",
-           "expressionAttributeNames": {
-              "#pk": "pk",
-            },
-           "expressionAttributeValues": {
-              ":pk": "ORG#$ctx.args.organizationID#USER#$ctx.args.id",
-            }
-          `,
-      } as unknown as KeyCondition),
-      responseMappingTemplate: MappingTemplate.fromString(
-        "$util.toJson($ctx.result.items.get(0))"
-      ),
-    });
-
-    tableDS.createResolver({
-      typeName: "Query",
-      fieldName: "conversation",
-      requestMappingTemplate: MappingTemplate.fromString(
-        JSON.stringify({ id: "$context.args.id" })
-      ),
-      responseMappingTemplate: MappingTemplate.fromString(
-        "$util.toJson($ctx.result)"
-      ),
-    });
+    new Resolvers(this, tableDS);
   }
 }

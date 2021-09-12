@@ -1,5 +1,4 @@
 import "@aws-cdk/assert/jest";
-import { SynthUtils } from "@aws-cdk/assert";
 import { App } from "@aws-cdk/core";
 import BackendStack from "../BackendStack";
 
@@ -32,9 +31,4 @@ it("creates a dynamodb table", () => {
 
 it("creates the API schema", () => {
   expect(stack).toHaveResource("AWS::AppSync::GraphQLSchema");
-});
-
-it("creates resources matching the snapshot", () => {
-  const cloudformation = SynthUtils.toCloudFormation(stack);
-  expect(cloudformation).toMatchSnapshot();
 });

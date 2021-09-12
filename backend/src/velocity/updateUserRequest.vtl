@@ -1,0 +1,12 @@
+#set($input = $context.args.input)
+#set($input.type = "USER")
+
+{
+    "version": "2017-02-28",
+    "operation": "PutItem",
+    "key" : {
+        "pk" : $util.dynamodb.toDynamoDBJson("ORG#$ctx.args.input.organizationID#USER#$ctx.args.input.id"),
+        "sk" : $util.dynamodb.toDynamoDBJson("USER#$ctx.args.input.id")
+    },
+    "attributeValues": $util.dynamodb.toMapValuesJson($input)
+}

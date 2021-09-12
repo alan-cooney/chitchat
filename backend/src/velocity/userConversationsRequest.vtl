@@ -1,0 +1,13 @@
+{
+    "version" : "2017-02-28",
+    "operation" : "Query",
+    "expression": "#pk = :pk and begins_with(#sk, :skPrefix)",
+    "expressionAttributeNames": {
+        "#pk": "pk",
+        "#sk": "sk"
+    },
+    "expressionAttributeValues": {
+        ":pk": "ORG#$ctx.args.organizationID#USER#$ctx.args.id",
+        "skPrefix": "PARTICIPANT"
+    }
+}
