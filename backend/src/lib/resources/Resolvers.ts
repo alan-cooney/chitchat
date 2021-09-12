@@ -73,9 +73,22 @@ export default class Resolvers {
       typeName: "User",
       fieldName: "conversations",
       requestMappingTemplate: MappingTemplate.fromString(
-        join(__dirname, "../../velocity/conversationRequest.vtl")
+        join(__dirname, "../../velocity/userConversationsRequest.vtl")
       ),
-      responseMappingTemplate: MappingTemplate.dynamoDbResultItem(),
+      responseMappingTemplate: MappingTemplate.fromString(
+        join(__dirname, "../../velocity/userConversationsResponse.vtl")
+      ),
+    });
+
+    tableDS.createResolver({
+      typeName: "Conversation",
+      fieldName: "messages",
+      requestMappingTemplate: MappingTemplate.fromString(
+        join(__dirname, "../../velocity/userConversationsRequest.vtl")
+      ),
+      responseMappingTemplate: MappingTemplate.fromString(
+        join(__dirname, "../../velocity/userConversationsResponse.vtl")
+      ),
     });
   }
 }

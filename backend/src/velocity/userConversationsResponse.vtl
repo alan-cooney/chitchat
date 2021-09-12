@@ -1,0 +1,8 @@
+#set($items = [])
+#foreach($i in $context.result.items)
+    $util.qr($items.add({"id": $i.conversationID})
+#end
+{
+    nextToken: $context.result.nextToken,
+    items: $items
+}

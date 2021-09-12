@@ -13,7 +13,8 @@
         "#sk": "sk"
     },
     "expressionAttributeValues": {
-        ":pk": "ORG#$ctx.source.organizationID#USER#$ctx.source.id",
-        "skPrefix": "PARTICIPANT"
+        ":pk": "ORG#$ctx.source.organizationID#CONV#$ctx.source.id",
+        "skPrefix": "MSG"
     },
+    "scanIndexForward": false
 }

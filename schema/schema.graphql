@@ -37,7 +37,7 @@ type User implements Node
   familyName: String @column
   email: String @column
   phone: String @column
-  conversations(limit: Int!, nextKey: String!): ConversationConnection!
+  conversations(limit: Int!, nextToken: String!): ConversationConnection!
 }
 
 """
@@ -63,8 +63,8 @@ Conversation
 """
 type Conversation implements Node {
   id: ID!
-  participants: [User!]!
-  messages(limit: Int!, nextKey: String!): [Message!]!
+  # participants: [User!]!
+  messages(limit: Int!, nextToken: String!): MessageConnection
 }
 
 type ConversationConnection implements Nodes {
@@ -89,6 +89,11 @@ type Message implements Node
   id: ID! @id
   conversation: Conversation!
   text: String! @column
+}
+
+type MessageConnection implements Nodes {
+  items: [Message!]!
+  nextToken: String
 }
 
 type Mutation {
