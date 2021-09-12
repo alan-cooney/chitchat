@@ -1,0 +1,12 @@
+#set($input = $context.args.input)
+#set($input.appConversation = "APP#$ctx.args.input.appID#CONV#$ctx.args.input.conversationID")
+
+{
+    "version": "2017-02-28",
+    "operation": "PutItem",
+    "key" : {
+        "pk": $util.dynamodb.toDynamoDBJson("APP#$ctx.args.input.appID#USER#$ctx.args.input.userID"),
+        "sk": $util.dynamodb.toDynamoDBJson("UPDATED#$util.time.nowEpochSeconds()#CONV#$ctx.args.input.conversationID"),
+    },
+    "attributeValues": $util.dynamodb.toMapValuesJson($input)
+}

@@ -1,0 +1,305 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`creates resources matching the snapshot 1`] = `
+Object {
+  "Resources": Object {
+    "apiC8550315": Object {
+      "Properties": Object {
+        "AuthenticationType": "API_KEY",
+        "Name": "test",
+      },
+      "Type": "AWS::AppSync::GraphQLApi",
+    },
+    "apiDefaultApiKey6AB8D7C4": Object {
+      "DependsOn": Array [
+        "apiSchema0EA92056",
+      ],
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+      },
+      "Type": "AWS::AppSync::ApiKey",
+    },
+    "apiSchema0EA92056": Object {
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+        "Definition": "",
+      },
+      "Type": "AWS::AppSync::GraphQLSchema",
+    },
+    "apiparticipantTableDataSource8A0AE66C": Object {
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+        "DynamoDBConfig": Object {
+          "AwsRegion": Object {
+            "Ref": "AWS::Region",
+          },
+          "TableName": Object {
+            "Ref": "participantTableAB77BAF2",
+          },
+        },
+        "Name": "participantTableDataSource",
+        "ServiceRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "apiparticipantTableDataSourceServiceRole53465F5B",
+            "Arn",
+          ],
+        },
+        "Type": "AMAZON_DYNAMODB",
+      },
+      "Type": "AWS::AppSync::DataSource",
+    },
+    "apiparticipantTableDataSourceConversationparticipantsResolver99284997": Object {
+      "DependsOn": Array [
+        "apiparticipantTableDataSource8A0AE66C",
+        "apiSchema0EA92056",
+      ],
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+        "DataSourceName": "participantTableDataSource",
+        "FieldName": "participants",
+        "Kind": "UNIT",
+        "RequestMappingTemplate": "{
+    \\"version\\" : \\"2017-02-28\\",
+    \\"operation\\" : \\"Query\\",
+    \\"index\\": \\"conversation\\",
+    #if($util.isNullOrEmpty($ctx.args.nextToken) == false)
+        \\"nextToken\\" : \\"$ctx.args.nextToken\\",
+    #end
+    #if($util.isNullOrEmpty($ctx.args.limit) == false)
+        \\"limit\\" : $ctx.args.limit,
+    #end
+    \\"expression\\": \\"#appConversation = :appConversation\\",
+    \\"expressionAttributeNames\\": {
+        \\"#appConversation\\": \\"appConversation\\",
+    },
+    \\"expressionAttributeValues\\": {
+        \\":appConversation\\": \\"APP#$ctx.source.appID#CONV#$ctx.source.id\\"
+    },
+}",
+        "ResponseMappingTemplate": "$util.toJson($ctx.result)",
+        "TypeName": "Conversation",
+      },
+      "Type": "AWS::AppSync::Resolver",
+    },
+    "apiparticipantTableDataSourceMutationaddParticipantResolverD1A759EF": Object {
+      "DependsOn": Array [
+        "apiparticipantTableDataSource8A0AE66C",
+        "apiSchema0EA92056",
+      ],
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+        "DataSourceName": "participantTableDataSource",
+        "FieldName": "addParticipant",
+        "Kind": "UNIT",
+        "RequestMappingTemplate": "#set($input = $context.args.input)
+#set($input.appConversation = \\"APP#$ctx.args.input.appID#CONV#$ctx.args.input.conversationID\\")
+
+{
+    \\"version\\": \\"2017-02-28\\",
+    \\"operation\\": \\"PutItem\\",
+    \\"key\\" : {
+        \\"pk\\": $util.dynamodb.toDynamoDBJson(\\"APP#$ctx.args.input.appID#USER#$ctx.args.input.userID\\"),
+        \\"sk\\": $util.dynamodb.toDynamoDBJson(\\"UPDATED#$util.time.nowEpochSeconds()#CONV#$ctx.args.input.conversationID\\"),
+    },
+    \\"attributeValues\\": $util.dynamodb.toMapValuesJson($input)
+}",
+        "ResponseMappingTemplate": "$util.toJson($ctx.result)",
+        "TypeName": "Mutation",
+      },
+      "Type": "AWS::AppSync::Resolver",
+    },
+    "apiparticipantTableDataSourceServiceRole53465F5B": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "appsync.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "apiparticipantTableDataSourceServiceRoleDefaultPolicy6003596E": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "participantTableAB77BAF2",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "participantTableAB77BAF2",
+                          "Arn",
+                        ],
+                      },
+                      "/index/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "apiparticipantTableDataSourceServiceRoleDefaultPolicy6003596E",
+        "Roles": Array [
+          Object {
+            "Ref": "apiparticipantTableDataSourceServiceRole53465F5B",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "apiparticipantTableDataSourceUserparticipationResolver0A1122D9": Object {
+      "DependsOn": Array [
+        "apiparticipantTableDataSource8A0AE66C",
+        "apiSchema0EA92056",
+      ],
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+        "DataSourceName": "participantTableDataSource",
+        "FieldName": "participation",
+        "Kind": "UNIT",
+        "RequestMappingTemplate": "{
+    \\"version\\" : \\"2017-02-28\\",
+    \\"operation\\" : \\"Query\\",
+    #if($util.isNullOrEmpty($ctx.args.nextToken) == false)
+        \\"nextToken\\" : \\"$ctx.args.nextToken\\",
+    #end
+    #if($util.isNullOrEmpty($ctx.args.limit) == false)
+        \\"limit\\" : $ctx.args.limit,
+    #end
+    \\"expression\\": \\"#pk = :pk and begins_with(#sk, :skPrefix)\\",
+    \\"expressionAttributeNames\\": {
+        \\"#pk\\": \\"pk\\",
+        \\"#sk\\": \\"sk\\"
+    },
+    \\"expressionAttributeValues\\": {
+        \\":pk\\": \\"APP#$ctx.source.appID#USER#$ctx.source.id\\"
+    },
+    \\"scanIndexForward\\": false
+}",
+        "ResponseMappingTemplate": "$util.toJson($ctx.result)",
+        "TypeName": "User",
+      },
+      "Type": "AWS::AppSync::Resolver",
+    },
+    "participantTableAB77BAF2": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "AttributeDefinitions": Array [
+          Object {
+            "AttributeName": "pk",
+            "AttributeType": "S",
+          },
+          Object {
+            "AttributeName": "sk",
+            "AttributeType": "S",
+          },
+          Object {
+            "AttributeName": "appConversation",
+            "AttributeType": "S",
+          },
+          Object {
+            "AttributeName": "userID",
+            "AttributeType": "S",
+          },
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "GlobalSecondaryIndexes": Array [
+          Object {
+            "IndexName": "conversation",
+            "KeySchema": Array [
+              Object {
+                "AttributeName": "appConversation",
+                "KeyType": "HASH",
+              },
+              Object {
+                "AttributeName": "userID",
+                "KeyType": "RANGE",
+              },
+            ],
+            "Projection": Object {
+              "ProjectionType": "ALL",
+            },
+          },
+        ],
+        "KeySchema": Array [
+          Object {
+            "AttributeName": "pk",
+            "KeyType": "HASH",
+          },
+          Object {
+            "AttributeName": "sk",
+            "KeyType": "RANGE",
+          },
+        ],
+        "PointInTimeRecoverySpecification": Object {
+          "PointInTimeRecoveryEnabled": true,
+        },
+      },
+      "Type": "AWS::DynamoDB::Table",
+      "UpdateReplacePolicy": "Retain",
+    },
+  },
+}
+`;

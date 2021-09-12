@@ -8,9 +8,9 @@ import {
 import { AuthorizationType, GraphqlApi, Schema } from "@aws-cdk/aws-appsync";
 import { join } from "path";
 import { spawnSync } from "child_process";
-import Resolvers from "./resources/Resolvers";
 import User from "./resources/user/User";
 import Conversation from "./resources/conversation/Conversation";
+import Participant from "./resources/participant/Participant";
 
 export default class BackendStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -39,5 +39,7 @@ export default class BackendStack extends Stack {
     new User(this, api);
 
     new Conversation(this, api);
+
+    new Participant(this, api);
   }
 }

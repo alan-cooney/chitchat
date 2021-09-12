@@ -3,11 +3,11 @@ type Mutation {
 }
 
 type Conversation {
-  participants: ParticipantConnection
+  participants: ParticipantConnection!
 }
 
 type User {
-  participations(limit: Int!, nextToken: String!): ParticipantConnection!
+  participation(limit: Int!, nextToken: String!): ParticipantConnection!
 }
 
 type Subscription {
@@ -26,10 +26,11 @@ type Participant
       { path: "conversationID", type: "string" }
       { path: "userID", type: "string" }
       { path: "appID", type: "string" }
-      { path: "type", type: "EntityType" }
+      { path: "appConversation", type: "string" }
     ]
   ) {
-  id: ID!
+  # We have to put something in here for codegen to work (this is also in conversation.graphql)
+  conversation: Conversation!
 }
 
 type ParticipantConnection implements Nodes {

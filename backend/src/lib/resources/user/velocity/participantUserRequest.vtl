@@ -2,6 +2,6 @@
     "version": "2017-02-28",
     "operation": "GetItem",
     "key": {
-        "pk": $util.dynamodb.toDynamoDBJson("APP#$ctx.source.appID#USER#$ctx.source.id")
+        "pk": $util.dynamodb.toDynamoDBJson("APP#$ctx.source.appID#USER#$ctx.source.userID")
     }
 }

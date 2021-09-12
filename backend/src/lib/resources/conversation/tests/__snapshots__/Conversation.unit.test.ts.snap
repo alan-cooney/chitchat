@@ -112,7 +112,7 @@ Object {
     \\"version\\": \\"2017-02-28\\",
     \\"operation\\": \\"GetItem\\",
     \\"key\\": {
-        \\"pk\\": $util.dynamodb.toDynamoDBJson(\\"APP#$ctx.source.appID#CONV#$ctx.source.id\\")
+        \\"pk\\": $util.dynamodb.toDynamoDBJson(\\"APP#$ctx.source.appID#CONV#$ctx.source.conversationID\\")
     }
 }",
         "ResponseMappingTemplate": "$util.toJson($ctx.result)",
