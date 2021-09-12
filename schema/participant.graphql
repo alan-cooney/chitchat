@@ -1,0 +1,48 @@
+type Mutation {
+  addParticipant(input: AddParticipantInput!): Participant!
+}
+
+type Conversation {
+  participants: ParticipantConnection
+}
+
+type User {
+  participations(limit: Int!, nextToken: String!): ParticipantConnection!
+}
+
+type Subscription {
+  addedParticipant(input: AddedParticipantSubscriptionInput!): Participant!
+    @aws_subscribe(mutations: ["addParticipant"])
+}
+
+"""
+Conversation Participant
+"""
+type Participant
+  @entity(
+    additionalFields: [
+      { path: "pk", type: "string" }
+      { path: "sk", type: "string" }
+      { path: "conversationID", type: "string" }
+      { path: "userID", type: "string" }
+      { path: "appID", type: "string" }
+      { path: "type", type: "EntityType" }
+    ]
+  ) {
+  id: ID!
+}
+
+type ParticipantConnection implements Nodes {
+  items: [Participant!]!
+  nextToken: String
+}
+
+input AddParticipantInput {
+  conversationID: ID!
+  appID: ID!
+  userID: ID!
+}
+
+input AddedParticipantSubscriptionInput {
+  userID: ID!
+}

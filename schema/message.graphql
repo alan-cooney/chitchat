@@ -1,0 +1,47 @@
+type Mutation {
+  addMessage(input: AddMessageInput!): Message!
+}
+
+type Conversation implements Node {
+  messages(limit: Int!, nextToken: String!): MessageConnection
+}
+
+type Subscription {
+  addedMessage(input: AddMessageSubscriptionInput!): Message!
+    @aws_subscribe(mutations: ["addMessage"])
+}
+
+"""
+Message
+"""
+type Message implements Node
+  @entity(
+    additionalFields: [
+      { path: "pk", type: "string" }
+      { path: "sk", type: "string" }
+      { path: "appID", type: "string" }
+      { path: "userID", type: "string" }
+      { path: "conversationID", type: "string" }
+      { path: "type", type: "EntityType" }
+    ]
+  ) {
+  id: ID! @id
+  conversation: Conversation!
+  text: String! @column
+}
+
+type MessageConnection implements Nodes {
+  items: [Message!]!
+  nextToken: String
+}
+
+input AddMessageInput {
+  userID: ID!
+  conversationID: ID!
+  appID: ID!
+  text: String!
+}
+
+input AddMessageSubscriptionInput {
+  conversationID: ID!
+}

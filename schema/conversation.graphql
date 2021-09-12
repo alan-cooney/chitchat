@@ -1,0 +1,20 @@
+type Query {
+  conversation(appID: ID!, id: ID!): Conversation!
+}
+
+type Participant {
+  conversation: Conversation!
+}
+
+"""
+Conversation
+"""
+type Conversation implements Node
+  @entity(
+    additionalFields: [
+      { path: "pk", type: "string" }
+      { path: "appID", type: "string" }
+    ]
+  ) {
+  id: ID!
+}

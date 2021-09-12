@@ -1,0 +1,48 @@
+type Query {
+  user(appID: ID!, id: ID!): User!
+}
+
+type Mutation {
+  updateUser(input: UpdateUserInput!): User!
+}
+
+type Participant {
+  user: UserPublicProfile!
+}
+
+"""
+Chat User
+"""
+type User implements Node
+  @entity(
+    additionalFields: [
+      { path: "pk", type: "string" }
+      { path: "appID", type: "string" }
+    ]
+  ) {
+  """
+  Unique user ID
+  """
+  id: ID! @id
+  givenName: String! @column
+  familyName: String @column
+  email: String @column
+  phone: String @column
+}
+
+"""
+Chat user public profile
+"""
+type UserPublicProfile implements Node {
+  id: ID!
+  givenName: String!
+}
+
+input UpdateUserInput {
+  email: AWSEmail
+  familyName: String
+  givenName: String!
+  id: ID!
+  appID: ID!
+  phone: AWSPhone
+}
