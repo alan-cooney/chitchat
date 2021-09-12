@@ -108,7 +108,13 @@ Object {
         "DataSourceName": "conversationTableDataSource",
         "FieldName": "conversation",
         "Kind": "UNIT",
-        "RequestMappingTemplate": "/home/alan/repos/chitchat/backend/src/lib/velocity/participantConversationRequest.vtl",
+        "RequestMappingTemplate": "{
+    \\"version\\": \\"2017-02-28\\",
+    \\"operation\\": \\"GetItem\\",
+    \\"key\\": {
+        \\"pk\\": $util.dynamodb.toDynamoDBJson(\\"APP#$ctx.source.appID#CONV#$ctx.source.id\\")
+    }
+}",
         "ResponseMappingTemplate": "$util.toJson($ctx.result)",
         "TypeName": "Participant",
       },

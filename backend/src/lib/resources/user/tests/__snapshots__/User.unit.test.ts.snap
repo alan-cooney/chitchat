@@ -108,7 +108,13 @@ Object {
         "DataSourceName": "userTableDataSource",
         "FieldName": "user",
         "Kind": "UNIT",
-        "RequestMappingTemplate": "/home/alan/repos/chitchat/backend/src/lib/velocity/participantUserRequest.vtl",
+        "RequestMappingTemplate": "{
+    \\"version\\": \\"2017-02-28\\",
+    \\"operation\\": \\"GetItem\\",
+    \\"key\\": {
+        \\"pk\\": $util.dynamodb.toDynamoDBJson(\\"APP#$ctx.source.appID#USER#$ctx.source.id\\")
+    }
+}",
         "ResponseMappingTemplate": "$util.toJson($ctx.result)",
         "TypeName": "Participant",
       },
@@ -133,7 +139,7 @@ Object {
     \\"version\\": \\"2017-02-28\\",
     \\"operation\\": \\"GetItem\\",
     \\"key\\": {
-        \\":pk\\": \\"APP#$ctx.args.appID#USER#$ctx.args.id\\"
+        \\"pk\\": $util.dynamodb.toDynamoDBJson(\\"APP#$ctx.args.appID#USER#$ctx.args.id\\")
     }
 }",
         "ResponseMappingTemplate": "$util.toJson($ctx.result)",

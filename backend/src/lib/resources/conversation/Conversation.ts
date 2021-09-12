@@ -43,8 +43,8 @@ export default class Conversation {
     tableDS.createResolver({
       typeName: "Participant",
       fieldName: "conversation",
-      requestMappingTemplate: MappingTemplate.fromString(
-        join(__dirname, "../../velocity/participantConversationRequest.vtl")
+      requestMappingTemplate: MappingTemplate.fromFile(
+        join(__dirname, "./velocity/participantConversationRequest.vtl")
       ),
       responseMappingTemplate: MappingTemplate.dynamoDbResultItem(),
     });

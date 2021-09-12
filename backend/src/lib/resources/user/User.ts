@@ -46,8 +46,8 @@ export default class User {
     tableDS.createResolver({
       typeName: "Participant",
       fieldName: "user",
-      requestMappingTemplate: MappingTemplate.fromString(
-        join(__dirname, "../../velocity/participantUserRequest.vtl")
+      requestMappingTemplate: MappingTemplate.fromFile(
+        join(__dirname, "./velocity/participantUserRequest.vtl")
       ),
       responseMappingTemplate: MappingTemplate.dynamoDbResultItem(),
     });
