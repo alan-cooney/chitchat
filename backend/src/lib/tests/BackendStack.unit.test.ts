@@ -7,28 +7,6 @@ const stack = new BackendStack(app, "test");
 
 jest.mock("child_process");
 
-it("creates a dynamodb table", () => {
-  expect(stack).toHaveResource("AWS::DynamoDB::Table", {
-    BillingMode: "PAY_PER_REQUEST",
-    KeySchema: [
-      {
-        AttributeName: "pk",
-        KeyType: "HASH",
-      },
-      {
-        AttributeName: "sk",
-        KeyType: "RANGE",
-      },
-    ],
-    PointInTimeRecoverySpecification: {
-      PointInTimeRecoveryEnabled: true,
-    },
-    StreamSpecification: {
-      StreamViewType: "NEW_AND_OLD_IMAGES",
-    },
-  });
-});
-
 it("creates the API schema", () => {
   expect(stack).toHaveResource("AWS::AppSync::GraphQLSchema");
 });

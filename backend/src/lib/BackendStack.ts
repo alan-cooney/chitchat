@@ -10,6 +10,7 @@ import { join } from "path";
 import { spawnSync } from "child_process";
 import Resolvers from "./resources/Resolvers";
 import User from "./resources/user/User";
+import Conversation from "./resources/conversation/Conversation";
 
 export default class BackendStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -17,20 +18,6 @@ export default class BackendStack extends Stack {
 
     // Code-generate the Appsync-suitable schema before continuing
     spawnSync("graphql-codegen");
-
-    const table = new Table(this, "table", {
-      billingMode: BillingMode.PAY_PER_REQUEST,
-      partitionKey: {
-        name: "pk",
-        type: AttributeType.STRING,
-      },
-      pointInTimeRecovery: true,
-      sortKey: {
-        name: "sk",
-        type: AttributeType.STRING,
-      },
-      stream: StreamViewType.NEW_AND_OLD_IMAGES,
-    });
 
     const api = new GraphqlApi(this, "api", {
       name: id,
@@ -49,8 +36,8 @@ export default class BackendStack extends Stack {
       },
     });
 
-    const tableDS = api.addDynamoDbDataSource("tableDataSource", table);
-
     new User(this, api);
+
+    new Conversation(this, api);
   }
 }

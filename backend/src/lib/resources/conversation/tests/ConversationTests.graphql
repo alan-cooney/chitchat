@@ -1,0 +1,11 @@
+mutation AddConversationTest($input: AddConversationInput!) {
+  addConversation(input: $input) {
+    id
+  }
+}
+
+query QueryConversationTest($appID: ID!, $id: ID!) {
+  conversation(appID: $appID, id: $id) {
+    id
+  }
+}

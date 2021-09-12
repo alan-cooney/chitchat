@@ -2,6 +2,10 @@ type Query {
   conversation(appID: ID!, id: ID!): Conversation!
 }
 
+type Mutation {
+  addConversation(input: AddConversationInput!): Conversation!
+}
+
 type Participant {
   conversation: Conversation!
 }
@@ -16,5 +20,10 @@ type Conversation implements Node
       { path: "appID", type: "string" }
     ]
   ) {
+  id: ID!
+}
+
+input AddConversationInput {
+  appID: ID!
   id: ID!
 }

@@ -1,0 +1,10 @@
+#set($input = $context.args.input)
+
+{
+    "version": "2017-02-28",
+    "operation": "PutItem",
+    "key" : {
+        "pk" : $util.dynamodb.toDynamoDBJson("APP#$ctx.args.input.appID#CONV#$ctx.args.input.id")
+    },
+    "attributeValues": $util.dynamodb.toMapValuesJson($input)
+}

@@ -36,7 +36,7 @@ Object {
       },
       "Type": "AWS::AppSync::GraphQLSchema",
     },
-    "apitableDataSourceCFD298C7": Object {
+    "apiconversationTableDataSourceF25AD297": Object {
       "Properties": Object {
         "ApiId": Object {
           "Fn::GetAtt": Array [
@@ -49,13 +49,13 @@ Object {
             "Ref": "AWS::Region",
           },
           "TableName": Object {
-            "Ref": "table8235A42E",
+            "Ref": "conversationTable542DF655",
           },
         },
-        "Name": "tableDataSource",
+        "Name": "conversationTableDataSource",
         "ServiceRoleArn": Object {
           "Fn::GetAtt": Array [
-            "apitableDataSourceServiceRole08EE8DB4",
+            "apiconversationTableDataSourceServiceRole69D326C3",
             "Arn",
           ],
         },
@@ -63,10 +63,10 @@ Object {
       },
       "Type": "AWS::AppSync::DataSource",
     },
-    "apitableDataSourceMutationaddMessageResolverDB6D8CD5": Object {
+    "apiconversationTableDataSourceMutationaddConversationResolver628FA85E": Object {
       "DependsOn": Array [
+        "apiconversationTableDataSourceF25AD297",
         "apiSchema0EA92056",
-        "apitableDataSourceCFD298C7",
       ],
       "Properties": Object {
         "ApiId": Object {
@@ -75,19 +75,16 @@ Object {
             "ApiId",
           ],
         },
-        "DataSourceName": "tableDataSource",
-        "FieldName": "addMessage",
+        "DataSourceName": "conversationTableDataSource",
+        "FieldName": "addConversation",
         "Kind": "UNIT",
         "RequestMappingTemplate": "#set($input = $context.args.input)
-#set($input.type = \\"MESSAGE\\")
-#set($input.id = $util.autoId())
 
 {
     \\"version\\": \\"2017-02-28\\",
     \\"operation\\": \\"PutItem\\",
     \\"key\\" : {
-        \\"pk\\" : $util.dynamodb.toDynamoDBJson(\\"ORG#$ctx.args.input.organizationID#CONV#$ctx.args.input.id\\"),
-        \\"sk\\" : $util.dynamodb.toDynamoDBJson(\\"CREATED#$util.time.nowEpochSeconds()#MSG#$input.id\\")
+        \\"pk\\" : $util.dynamodb.toDynamoDBJson(\\"APP#$ctx.args.input.appID#CONV#$ctx.args.input.id\\")
     },
     \\"attributeValues\\": $util.dynamodb.toMapValuesJson($input)
 }",
@@ -96,10 +93,10 @@ Object {
       },
       "Type": "AWS::AppSync::Resolver",
     },
-    "apitableDataSourceMutationaddParticipantResolverD635E16E": Object {
+    "apiconversationTableDataSourceParticipantconversationResolver4E52AED7": Object {
       "DependsOn": Array [
+        "apiconversationTableDataSourceF25AD297",
         "apiSchema0EA92056",
-        "apitableDataSourceCFD298C7",
       ],
       "Properties": Object {
         "ApiId": Object {
@@ -108,84 +105,19 @@ Object {
             "ApiId",
           ],
         },
-        "DataSourceName": "tableDataSource",
-        "FieldName": "addParticipant",
-        "Kind": "UNIT",
-        "RequestMappingTemplate": "#set($input = $context.args.input)
-#set($input.type = \\"PARTICIPANT\\")
-
-{
-    \\"version\\": \\"2017-02-28\\",
-    \\"operation\\": \\"PutItem\\",
-    \\"key\\" : {
-        \\"pk\\" : $util.dynamodb.toDynamoDBJson(\\"ORG#$ctx.args.input.organizationID#USER#$ctx.args.input.userID\\"),
-        \\"sk\\" : $util.dynamodb.toDynamoDBJson(\\"UPDATED#$util.time.nowEpochSeconds()#CONV#$ctx.args.input.conversationID\\")
-    },
-    \\"attributeValues\\": $util.dynamodb.toMapValuesJson($input)
-}",
-        "ResponseMappingTemplate": "$util.toJson($ctx.result)",
-        "TypeName": "Mutation",
-      },
-      "Type": "AWS::AppSync::Resolver",
-    },
-    "apitableDataSourceMutationupdateUserResolver63DBAD87": Object {
-      "DependsOn": Array [
-        "apiSchema0EA92056",
-        "apitableDataSourceCFD298C7",
-      ],
-      "Properties": Object {
-        "ApiId": Object {
-          "Fn::GetAtt": Array [
-            "apiC8550315",
-            "ApiId",
-          ],
-        },
-        "DataSourceName": "tableDataSource",
-        "FieldName": "updateUser",
-        "Kind": "UNIT",
-        "RequestMappingTemplate": "#set($input = $context.args.input)
-#set($input.type = \\"USER\\")
-
-{
-    \\"version\\": \\"2017-02-28\\",
-    \\"operation\\": \\"PutItem\\",
-    \\"key\\" : {
-        \\"pk\\" : $util.dynamodb.toDynamoDBJson(\\"ORG#$ctx.args.input.organizationID#USER#$ctx.args.input.id\\"),
-        \\"sk\\" : $util.dynamodb.toDynamoDBJson(\\"USER#$ctx.args.input.id\\")
-    },
-    \\"attributeValues\\": $util.dynamodb.toMapValuesJson($input)
-}",
-        "ResponseMappingTemplate": "$util.toJson($ctx.result)",
-        "TypeName": "Mutation",
-      },
-      "Type": "AWS::AppSync::Resolver",
-    },
-    "apitableDataSourceQueryconversationResolverEC1FB87A": Object {
-      "DependsOn": Array [
-        "apiSchema0EA92056",
-        "apitableDataSourceCFD298C7",
-      ],
-      "Properties": Object {
-        "ApiId": Object {
-          "Fn::GetAtt": Array [
-            "apiC8550315",
-            "ApiId",
-          ],
-        },
-        "DataSourceName": "tableDataSource",
+        "DataSourceName": "conversationTableDataSource",
         "FieldName": "conversation",
         "Kind": "UNIT",
-        "RequestMappingTemplate": "/home/alan/repos/chitchat/backend/src/velocity/conversationRequest.vtl",
-        "ResponseMappingTemplate": "## Return a single item (the first result) from a query
-$util.toJson($ctx.result.items.get(0))",
-        "TypeName": "Query",
+        "RequestMappingTemplate": "/home/alan/repos/chitchat/backend/src/lib/velocity/participantConversationRequest.vtl",
+        "ResponseMappingTemplate": "$util.toJson($ctx.result)",
+        "TypeName": "Participant",
       },
       "Type": "AWS::AppSync::Resolver",
     },
-    "apitableDataSourceQueryuserResolver4A437C3B": Object {
+    "apiconversationTableDataSourceQueryconversationResolverA8E8AD36": Object {
       "DependsOn": Array [
+        "apiconversationTableDataSourceF25AD297",
         "apiSchema0EA92056",
-        "apitableDataSourceCFD298C7",
       ],
       "Properties": Object {
         "ApiId": Object {
@@ -194,27 +126,22 @@ $util.toJson($ctx.result.items.get(0))",
             "ApiId",
           ],
         },
-        "DataSourceName": "tableDataSource",
-        "FieldName": "user",
+        "DataSourceName": "conversationTableDataSource",
+        "FieldName": "conversation",
         "Kind": "UNIT",
         "RequestMappingTemplate": "{
-    \\"version\\" : \\"2017-02-28\\",
-    \\"operation\\" : \\"Query\\",
-    \\"expression\\": \\"#pk = :pk\\",
-    \\"expressionAttributeNames\\": {
-        \\"#pk\\": \\"pk\\",
-    },
-    \\"expressionAttributeValues\\": {
-        \\":pk\\": \\"ORG#$ctx.args.organizationID#USER#$ctx.args.id\\",
+    \\"version\\": \\"2017-02-28\\",
+    \\"operation\\": \\"GetItem\\",
+    \\"key\\": {
+        \\"pk\\": $util.dynamodb.toDynamoDBJson(\\"APP#$ctx.args.appID#CONV#$ctx.args.id\\")
     }
 }",
-        "ResponseMappingTemplate": "## Return a single item (the first result) from a query
-$util.toJson($ctx.result.items.get(0))",
+        "ResponseMappingTemplate": "$util.toJson($ctx.result)",
         "TypeName": "Query",
       },
       "Type": "AWS::AppSync::Resolver",
     },
-    "apitableDataSourceServiceRole08EE8DB4": Object {
+    "apiconversationTableDataSourceServiceRole69D326C3": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -231,7 +158,7 @@ $util.toJson($ctx.result.items.get(0))",
       },
       "Type": "AWS::IAM::Role",
     },
-    "apitableDataSourceServiceRoleDefaultPolicy33FDDB21": Object {
+    "apiconversationTableDataSourceServiceRoleDefaultPolicy67B6F07F": Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
@@ -253,7 +180,7 @@ $util.toJson($ctx.result.items.get(0))",
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
-                    "table8235A42E",
+                    "conversationTable542DF655",
                     "Arn",
                   ],
                 },
@@ -265,16 +192,16 @@ $util.toJson($ctx.result.items.get(0))",
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "apitableDataSourceServiceRoleDefaultPolicy33FDDB21",
+        "PolicyName": "apiconversationTableDataSourceServiceRoleDefaultPolicy67B6F07F",
         "Roles": Array [
           Object {
-            "Ref": "apitableDataSourceServiceRole08EE8DB4",
+            "Ref": "apiconversationTableDataSourceServiceRole69D326C3",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "table8235A42E": Object {
+    "conversationTable542DF655": Object {
       "DeletionPolicy": "Retain",
       "Properties": Object {
         "AttributeDefinitions": Array [
@@ -283,15 +210,15 @@ $util.toJson($ctx.result.items.get(0))",
             "AttributeType": "S",
           },
         ],
+        "BillingMode": "PAY_PER_REQUEST",
         "KeySchema": Array [
           Object {
             "AttributeName": "pk",
             "KeyType": "HASH",
           },
         ],
-        "ProvisionedThroughput": Object {
-          "ReadCapacityUnits": 5,
-          "WriteCapacityUnits": 5,
+        "PointInTimeRecoverySpecification": Object {
+          "PointInTimeRecoveryEnabled": true,
         },
       },
       "Type": "AWS::DynamoDB::Table",
