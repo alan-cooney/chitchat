@@ -1,0 +1,17 @@
+mutation AddMessageTest($input: AddMessageInput!) {
+  addMessage(input: $input) {
+    id
+    text
+  }
+}
+
+query QueryMessageTest($appID: ID!, $id: ID!) {
+  conversation(appID: $appID, id: $id) {
+    messages {
+      items {
+        id
+        text
+      }
+    }
+  }
+}

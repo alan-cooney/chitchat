@@ -7,7 +7,7 @@ type Conversation {
 }
 
 type User {
-  participation(limit: Int!, nextToken: String!): ParticipantConnection!
+  participation(limit: Int, nextToken: String): ParticipantConnection!
 }
 
 type Subscription {

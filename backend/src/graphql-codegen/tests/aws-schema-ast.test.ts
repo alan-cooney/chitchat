@@ -1,17 +1,17 @@
-import { buildSchema } from 'graphql';
-import { plugin } from '../aws-schema-ast';
+import { buildSchema } from "graphql";
+import { plugin } from "../aws-schema-ast";
 
-test('Runs without errors', () => {
+test("Runs without errors", () => {
   const schema = buildSchema(`
   type Query {
     hello: String
   }
 `);
   const res = plugin(schema);
-  expect(res.includes('Query')).toBeTruthy();
+  expect(res.includes("Query")).toBeTruthy();
 });
 
-test('Removes comments', () => {
+test("Removes comments", () => {
   const schema = buildSchema(`
       scalar AWSDateTime
       scalar DateTime
@@ -45,10 +45,10 @@ test('Removes none "@aws_" directives', () => {
     `);
 
   const res = plugin(schema).replace(
-    'directive @directive on OBJECT | FIELD_DEFINITION',
-    ''
+    "directive @directive on OBJECT | FIELD_DEFINITION",
+    ""
   );
-  expect(res.includes('@directive')).toBeFalsy();
+  expect(res.includes("@directive")).toBeFalsy();
 });
 
 test('Removes "@aws_" directive definitions', () => {
@@ -73,10 +73,10 @@ test('Removes "@aws_" directive definitions', () => {
     `);
 
   const res = plugin(schema);
-  expect(res.includes('@aws_iam')).toBeFalsy();
+  expect(res.includes("@aws_iam")).toBeFalsy();
 });
 
-test('Removes AWS Scalars', () => {
+test("Removes AWS Scalars", () => {
   const schema = buildSchema(`
         scalar AWSDateTime
         type Query {

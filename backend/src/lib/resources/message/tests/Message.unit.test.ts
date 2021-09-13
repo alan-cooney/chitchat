@@ -2,6 +2,7 @@ import "@aws-cdk/assert/jest";
 import { SynthUtils } from "@aws-cdk/assert";
 import { Stack } from "@aws-cdk/core";
 import { GraphqlApi } from "@aws-cdk/aws-appsync";
+import { AttributeType, Table } from "@aws-cdk/aws-dynamodb";
 import Message from "../Message";
 
 /**
@@ -11,7 +12,10 @@ const stack = new Stack();
 const api = new GraphqlApi(stack, "api", {
   name: "test",
 });
-new Message(stack, api);
+const participantTable = new Table(stack, "participantTable", {
+  partitionKey: { name: "pk", type: AttributeType.STRING },
+});
+new Message(stack, { api, participantTable });
 
 it("creates a dynamodb table", () => {
   expect(stack).toHaveResource("AWS::DynamoDB::Table", {

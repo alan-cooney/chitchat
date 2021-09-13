@@ -1,10 +1,4 @@
 import { Stack, Construct, StackProps } from "@aws-cdk/core";
-import {
-  AttributeType,
-  BillingMode,
-  StreamViewType,
-  Table,
-} from "@aws-cdk/aws-dynamodb";
 import { AuthorizationType, GraphqlApi, Schema } from "@aws-cdk/aws-appsync";
 import { join } from "path";
 import { spawnSync } from "child_process";

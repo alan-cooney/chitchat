@@ -36,7 +36,7 @@ Object {
       },
       "Type": "AWS::AppSync::GraphQLSchema",
     },
-    "apiconversationTableDataSourceF25AD297": Object {
+    "apimessageTableDataSource2B33EDE9": Object {
       "Properties": Object {
         "ApiId": Object {
           "Fn::GetAtt": Array [
@@ -49,13 +49,13 @@ Object {
             "Ref": "AWS::Region",
           },
           "TableName": Object {
-            "Ref": "conversationTable542DF655",
+            "Ref": "messageTable32BEE1EE",
           },
         },
-        "Name": "conversationTableDataSource",
+        "Name": "messageTableDataSource",
         "ServiceRoleArn": Object {
           "Fn::GetAtt": Array [
-            "apiconversationTableDataSourceServiceRole69D326C3",
+            "apimessageTableDataSourceServiceRole1DB3C03F",
             "Arn",
           ],
         },
@@ -63,9 +63,9 @@ Object {
       },
       "Type": "AWS::AppSync::DataSource",
     },
-    "apiconversationTableDataSourceMutationaddMessageResolver6F7CDE24": Object {
+    "apimessageTableDataSourceConversationmessagesResolverCA8264F1": Object {
       "DependsOn": Array [
-        "apiconversationTableDataSourceF25AD297",
+        "apimessageTableDataSource2B33EDE9",
         "apiSchema0EA92056",
       ],
       "Properties": Object {
@@ -75,42 +75,8 @@ Object {
             "ApiId",
           ],
         },
-        "DataSourceName": "conversationTableDataSource",
-        "FieldName": "addMessage",
-        "Kind": "UNIT",
-        "RequestMappingTemplate": "#set($input = $context.args.input)
-#set($uuid = $util.autoId())
-#set($shortUUID = $uuid.substring(8))
-#set($id = \\"$util.time.nowEpochSeconds()$shortUUID\\")
-
-{
-    \\"version\\": \\"2017-02-28\\",
-    \\"operation\\": \\"PutItem\\",
-    \\"key\\" : {
-        \\"pk\\": $util.dynamodb.toDynamoDBJson(\\"APP#$ctx.args.input.appID#CONV#$ctx.args.input.conversationID\\"),
-        \\"id\\": $util.dynamodb.toDynamoDBJson($id)
-    },
-    \\"attributeValues\\": $util.dynamodb.toMapValuesJson($input)
-}",
-        "ResponseMappingTemplate": "$util.toJson($ctx.result)",
-        "TypeName": "Mutation",
-      },
-      "Type": "AWS::AppSync::Resolver",
-    },
-    "apiconversationTableDataSourceParticipantconversationResolver4E52AED7": Object {
-      "DependsOn": Array [
-        "apiconversationTableDataSourceF25AD297",
-        "apiSchema0EA92056",
-      ],
-      "Properties": Object {
-        "ApiId": Object {
-          "Fn::GetAtt": Array [
-            "apiC8550315",
-            "ApiId",
-          ],
-        },
-        "DataSourceName": "conversationTableDataSource",
-        "FieldName": "conversation",
+        "DataSourceName": "messageTableDataSource",
+        "FieldName": "messages",
         "Kind": "UNIT",
         "RequestMappingTemplate": "{
     \\"version\\" : \\"2017-02-28\\",
@@ -131,11 +97,45 @@ Object {
     \\"scanIndexForward\\": false
 }",
         "ResponseMappingTemplate": "$util.toJson($ctx.result)",
-        "TypeName": "Participant",
+        "TypeName": "Conversation",
       },
       "Type": "AWS::AppSync::Resolver",
     },
-    "apiconversationTableDataSourceServiceRole69D326C3": Object {
+    "apimessageTableDataSourceMutationaddMessageResolver27CC0A84": Object {
+      "DependsOn": Array [
+        "apimessageTableDataSource2B33EDE9",
+        "apiSchema0EA92056",
+      ],
+      "Properties": Object {
+        "ApiId": Object {
+          "Fn::GetAtt": Array [
+            "apiC8550315",
+            "ApiId",
+          ],
+        },
+        "DataSourceName": "messageTableDataSource",
+        "FieldName": "addMessage",
+        "Kind": "UNIT",
+        "RequestMappingTemplate": "#set($input = $context.args.input)
+#set($uuid = $util.autoId())
+#set($shortUUID = $uuid.substring(8))
+#set($id = \\"$util.time.nowEpochMilliSeconds()$shortUUID\\")
+
+{
+    \\"version\\": \\"2017-02-28\\",
+    \\"operation\\": \\"PutItem\\",
+    \\"key\\" : {
+        \\"pk\\": $util.dynamodb.toDynamoDBJson(\\"APP#$ctx.args.input.appID#CONV#$ctx.args.input.conversationID\\"),
+        \\"id\\": $util.dynamodb.toDynamoDBJson($id)
+    },
+    \\"attributeValues\\": $util.dynamodb.toMapValuesJson($input)
+}",
+        "ResponseMappingTemplate": "$util.toJson($ctx.result)",
+        "TypeName": "Mutation",
+      },
+      "Type": "AWS::AppSync::Resolver",
+    },
+    "apimessageTableDataSourceServiceRole1DB3C03F": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -152,7 +152,7 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "apiconversationTableDataSourceServiceRoleDefaultPolicy67B6F07F": Object {
+    "apimessageTableDataSourceServiceRoleDefaultPolicy8E13E678": Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
@@ -174,7 +174,7 @@ Object {
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
-                    "conversationTable542DF655",
+                    "messageTable32BEE1EE",
                     "Arn",
                   ],
                 },
@@ -186,16 +186,16 @@ Object {
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "apiconversationTableDataSourceServiceRoleDefaultPolicy67B6F07F",
+        "PolicyName": "apimessageTableDataSourceServiceRoleDefaultPolicy8E13E678",
         "Roles": Array [
           Object {
-            "Ref": "apiconversationTableDataSourceServiceRole69D326C3",
+            "Ref": "apimessageTableDataSourceServiceRole1DB3C03F",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "conversationTable542DF655": Object {
+    "messageTable32BEE1EE": Object {
       "DeletionPolicy": "Retain",
       "Properties": Object {
         "AttributeDefinitions": Array [
@@ -221,6 +221,231 @@ Object {
         ],
         "PointInTimeRecoverySpecification": Object {
           "PointInTimeRecoveryEnabled": true,
+        },
+        "StreamSpecification": Object {
+          "StreamViewType": "NEW_IMAGE",
+        },
+      },
+      "Type": "AWS::DynamoDB::Table",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "modifyParticipantAlarmEB0527FE": Object {
+      "Properties": Object {
+        "AlarmDescription": "A participant updated time could not be modified.",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "DatapointsToAlarm": 1,
+        "Dimensions": Array [
+          Object {
+            "Name": "QueueName",
+            "Value": Object {
+              "Fn::GetAtt": Array [
+                "modifyParticipantUpdatedTimeDLQ707E8105",
+                "QueueName",
+              ],
+            },
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "NumberOfMessagesSent",
+        "Namespace": "AWS/SQS",
+        "Period": 3600,
+        "Statistic": "Sum",
+        "Threshold": 1,
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "modifyParticipantUpdatedTimeCFC0F0F6": Object {
+      "DependsOn": Array [
+        "modifyParticipantUpdatedTimeServiceRoleDefaultPolicy0C93EF4D",
+        "modifyParticipantUpdatedTimeServiceRole0FA8D18A",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": "cdk-lambda-nodejs-mock-fake-bucket",
+          "S3Key": "cdk-lambda-nodejs-mock-fake-lambda.ts",
+        },
+        "Description": "Updates the \\"UPDATED\\" time for participants, when a new message is added to a conversation.",
+        "Environment": Object {
+          "Variables": Object {
+            "PARTICIPANT_TABLE_NAME": Object {
+              "Ref": "participantTableAB77BAF2",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 1024,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "modifyParticipantUpdatedTimeServiceRole0FA8D18A",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 15,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "modifyParticipantUpdatedTimeDLQ707E8105": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "MessageRetentionPeriod": 1209600,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "modifyParticipantUpdatedTimeDynamoDBEventSourcemessageTable4273B03C": Object {
+      "Properties": Object {
+        "BatchSize": 10,
+        "BisectBatchOnFunctionError": true,
+        "DestinationConfig": Object {
+          "OnFailure": Object {
+            "Destination": Object {
+              "Fn::GetAtt": Array [
+                "modifyParticipantUpdatedTimeDLQ707E8105",
+                "Arn",
+              ],
+            },
+          },
+        },
+        "EventSourceArn": Object {
+          "Fn::GetAtt": Array [
+            "messageTable32BEE1EE",
+            "StreamArn",
+          ],
+        },
+        "FunctionName": Object {
+          "Ref": "modifyParticipantUpdatedTimeCFC0F0F6",
+        },
+        "MaximumRetryAttempts": 10,
+        "StartingPosition": "LATEST",
+      },
+      "Type": "AWS::Lambda::EventSourceMapping",
+    },
+    "modifyParticipantUpdatedTimeServiceRole0FA8D18A": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "modifyParticipantUpdatedTimeServiceRoleDefaultPolicy0C93EF4D": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "dynamodb:ListStreams",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "dynamodb:DescribeStream",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "messageTable32BEE1EE",
+                  "StreamArn",
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "participantTableAB77BAF2",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "sqs:SendMessage",
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "modifyParticipantUpdatedTimeDLQ707E8105",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "modifyParticipantUpdatedTimeServiceRoleDefaultPolicy0C93EF4D",
+        "Roles": Array [
+          Object {
+            "Ref": "modifyParticipantUpdatedTimeServiceRole0FA8D18A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "participantTableAB77BAF2": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "AttributeDefinitions": Array [
+          Object {
+            "AttributeName": "pk",
+            "AttributeType": "S",
+          },
+        ],
+        "KeySchema": Array [
+          Object {
+            "AttributeName": "pk",
+            "KeyType": "HASH",
+          },
+        ],
+        "ProvisionedThroughput": Object {
+          "ReadCapacityUnits": 5,
+          "WriteCapacityUnits": 5,
         },
       },
       "Type": "AWS::DynamoDB::Table",

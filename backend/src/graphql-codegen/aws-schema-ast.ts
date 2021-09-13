@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   GraphQLSchema,
   parse,
@@ -11,7 +12,7 @@ import {
 import { printSchemaWithDirectives } from "@graphql-tools/utils";
 
 // eslint-disable-next-line import/prefer-default-export
-export function plugin(schema: GraphQLSchema) {
+export function plugin(schema: GraphQLSchema): any {
   const printedSchema = printSchemaWithDirectives(schema);
   const astNode = parse(printedSchema); // Transforms the string into ASTNode
   const visitor = {
