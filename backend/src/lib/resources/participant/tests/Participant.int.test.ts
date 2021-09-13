@@ -5,7 +5,7 @@ import config from "../../../../config";
 import {
   AddParticipantInput,
   AddParticipantTestDocument,
-} from "../../../../types/graphqlOperations";
+} from "../../../../types/graphql";
 
 // Setup the API Client
 let client: AppsyncClient;

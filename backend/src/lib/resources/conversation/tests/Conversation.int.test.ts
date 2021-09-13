@@ -7,7 +7,7 @@ import {
   AddConversationInput,
   AddConversationTestDocument,
   QueryConversationTestDocument,
-} from "../../../../types/graphqlOperations";
+} from "../../../../types/graphql";
 
 // Setup the API Client
 let client: AppsyncClient;

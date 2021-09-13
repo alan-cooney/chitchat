@@ -1,14 +1,21 @@
 import { IGraphqlApi, MappingTemplate } from "@aws-cdk/aws-appsync";
-import { AttributeType, BillingMode, Table } from "@aws-cdk/aws-dynamodb";
+import {
+  AttributeType,
+  BillingMode,
+  ProjectionType,
+  Table,
+} from "@aws-cdk/aws-dynamodb";
 import { Construct } from "@aws-cdk/core";
 import { join } from "path";
 
 export default class Participant {
+  public participantTable: Table;
+
   constructor(scope: Construct, api: IGraphqlApi) {
     const id = "participant";
 
     // Data
-    const table = new Table(scope, `${id}Table`, {
+    this.participantTable = new Table(scope, `${id}Table`, {
       billingMode: BillingMode.PAY_PER_REQUEST,
       partitionKey: {
         name: "pk", // Will be APP#{{app-id}}#USER#{{user-id}}
@@ -22,7 +29,7 @@ export default class Participant {
     });
 
     // GSI from Conversation -> participants
-    table.addGlobalSecondaryIndex({
+    this.participantTable.addGlobalSecondaryIndex({
       partitionKey: {
         name: "appConversation",
         type: AttributeType.STRING,
@@ -32,9 +39,13 @@ export default class Participant {
         type: AttributeType.STRING,
       },
       indexName: "conversation",
+      projectionType: ProjectionType.KEYS_ONLY,
     });
 
-    const tableDS = api.addDynamoDbDataSource(`${id}TableDataSource`, table);
+    const tableDS = api.addDynamoDbDataSource(
+      `${id}TableDataSource`,
+      this.participantTable
+    );
 
     // Mutation -> addParticipant
     tableDS.createResolver({

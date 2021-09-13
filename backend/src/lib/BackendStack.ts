@@ -41,8 +41,8 @@ export default class BackendStack extends Stack {
 
     new Conversation(this, api);
 
-    new Participant(this, api);
+    const { participantTable } = new Participant(this, api);
 
-    new Message(this, api);
+    new Message(this, { api, participantTable });
   }
 }

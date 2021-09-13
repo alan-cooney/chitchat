@@ -7,7 +7,7 @@ import {
   UpdateUserInput,
   UpdateUserTestDocument,
   QueryUserTestDocument,
-} from "../../../../types/graphqlOperations";
+} from "../../../../types/graphql";
 
 // Setup the API Client
 let client: AppsyncClient;
