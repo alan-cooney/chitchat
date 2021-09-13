@@ -9,4 +9,4 @@ dist/
 node_modules/
 schemas/.combined/combined.graphql
 tsconfig.tsbuildinfo
-src/types/graphqlOperations.ts
+src/types/graphql.ts

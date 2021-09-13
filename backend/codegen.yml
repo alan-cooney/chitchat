@@ -7,7 +7,7 @@ generates:
   ./dist/graphql-codegen/combined.graphql:
     plugins:
       - ./dist/graphql-codegen/aws-schema-ast.js
-  ./src/types/graphqlOperations.ts:
+  ./src/types/graphql.ts:
     plugins:
       - add:
           content: |
@@ -20,6 +20,12 @@ generates:
           skipTypename: true
       - typed-document-node:
           skipTypeName: true
+      - typescript-mongodb:
+        objectIdType: string
+        idFieldName: id
+        skipTypename: false
+        nonOptionalTypename: true
+        enumsAsString: false
     config:
         preResolveTypes: true
         flattenGeneratedTypes: true
