@@ -1,13 +1,24 @@
 import React from "react";
 import { Meta } from "@storybook/react/types-6-0";
-import Message from "./Message";
+import Message, { ConversationMessage } from "./Message";
 
-export const OtherAuthor = () => (
-  <Message message={{ text: "This is a message." }} />
-);
+const mockMessage: ConversationMessage = {
+  id: "message_UUID",
+  text:
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  created: "2022-01-01T00:00:00.000Z",
+  user: {
+    givenName: "Alan",
+    familyName: "Cooney",
+  },
+};
 
-export const IsAuthor = () => (
-  <Message message={{ text: "This is a message." }} isAuthor />
+export const OtherAuthor = () => <Message message={mockMessage} />;
+
+export const IsAuthor = () => <Message message={mockMessage} isAuthor />;
+
+export const ShortText = () => (
+  <Message message={{ ...mockMessage, text: "Short text." }} isAuthor />
 );
 
 export default {
