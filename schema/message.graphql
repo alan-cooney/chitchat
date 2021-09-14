@@ -28,6 +28,7 @@ type Message implements Node
   id: ID! @id
   conversation: Conversation!
   text: String! @column
+  created: AWSDateTime!
 }
 
 type MessageConnection implements Nodes {
