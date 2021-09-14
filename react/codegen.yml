@@ -1,18 +1,26 @@
 schema:
   - ../schema/**/*.graphql
+documents: 
+  - "./**/*.graphql"
+  - "./**/*.gql"
 generates:
   ./src/types/graphql.ts:
+    config:
+      scalars:
+        AWSDate: string
+        AWSTime: string
+        AWSDateTime: string
+        AWSTimestamp: string
+        AWSEmail: string
+        AWSJSON: '{ [key: string]: any }'
+        AWSURL: string
+        AWSPhone: string
+        AWSIPAddress: string
     plugins:
       - typescript:
-          scalars:
-            AWSDate: string
-            AWSTime: string
-            AWSDateTime: string
-            AWSTimestamp: string
-            AWSEmail: string
-            AWSJSON: '{ [key: string]: any }'
-            AWSURL: string
-            AWSPhone: string
-            AWSIPAddress: string
           namingConvention: keep
           onlyOperationTypes: false
+      - typescript-operations:
+          skipTypename: true
+      - typed-document-node:
+          skipTypeName: true

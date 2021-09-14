@@ -10,6 +10,7 @@
     "codegen": "graphql-codegen"
   },
   "dependencies": {
+    "luxon": "^2.0.2",
     "react-bootstrap": "^1.6.3"
   },
   "devDependencies": {
@@ -17,12 +18,14 @@
     "@graphql-codegen/add": "^3.1.0",
     "@graphql-codegen/cli": "^2.2.0",
     "@graphql-codegen/introspection": "^2.1.0",
+    "@graphql-codegen/typed-document-node": "^2.1.4",
     "@graphql-codegen/typescript": "^2.2.2",
-    "@graphql-codegen/typescript-mongodb": "^2.1.4",
+    "@graphql-codegen/typescript-operations": "^2.1.4",
     "@storybook/addon-actions": "^6.3.8",
     "@storybook/addon-essentials": "^6.3.8",
     "@storybook/addon-links": "^6.3.8",
     "@storybook/react": "^6.3.8",
+    "@types/luxon": "^2.0.4",
     "@types/react": "^17.0.20",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
     "@typescript-eslint/parser": "^4.29.0",
