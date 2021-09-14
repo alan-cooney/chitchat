@@ -14,3 +14,30 @@ query ConversationView($appID: ID!, $id: ID!) {
     }
   }
 }
+
+query InboxView($appID: ID!, $userID: ID!) {
+  user(appID: $appID, id: $userID) {
+    participation {
+      items {
+        conversation {
+          id
+          created
+          messages(limit: 1) {
+            items {
+              text
+              created
+            }
+          }
+          participants(limit: 4) {
+            items {
+              user {
+                id
+                givenName
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
