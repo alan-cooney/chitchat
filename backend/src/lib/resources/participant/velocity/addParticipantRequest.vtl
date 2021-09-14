@@ -6,7 +6,7 @@
     "operation": "PutItem",
     "key" : {
         "pk": $util.dynamodb.toDynamoDBJson("APP#$ctx.args.input.appID#USER#$ctx.args.input.userID"),
-        "sk": $util.dynamodb.toDynamoDBJson("UPDATED#$util.time.nowEpochMilliSeconds()#CONV#$ctx.args.input.conversationID"),
+        "sk": $util.dynamodb.toDynamoDBJson("UPDATED#$util.time.nowEpochSeconds()#CONV#$ctx.args.input.conversationID"),
     },
     "attributeValues": $util.dynamodb.toMapValuesJson($input)
 }

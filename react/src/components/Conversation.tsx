@@ -4,13 +4,13 @@ import { Col, Row } from "react-bootstrap";
 import { ConversationViewQuery, User } from "../types/graphql";
 import Message, { ConversationMessage } from "./Message";
 
-export function batchByDays(
+function batchByDays(
   messages: ConversationMessage[]
 ): { [day: string]: ConversationMessage[] } {
   const batch: { [day: string]: ConversationMessage[] } = {};
 
   messages.forEach((message) => {
-    const day = DateTime.fromISO(message.created).toLocaleString(
+    const day = DateTime.fromSeconds(message.created).toLocaleString(
       DateTime.DATE_FULL
     );
 
@@ -21,7 +21,7 @@ export function batchByDays(
   return batch;
 }
 
-export function ConversationDay({
+function ConversationDay({
   messages,
   day,
   user,

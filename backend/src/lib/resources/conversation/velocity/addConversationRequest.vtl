@@ -1,5 +1,5 @@
 #set($input = $context.args.input)
-#set($input.created = $util.time.nowISO8601())
+#set($input.created = $util.time.nowEpochSeconds())
 
 {
     "version": "2017-02-28",

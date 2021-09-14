@@ -21,7 +21,7 @@ type Conversation implements Node
     ]
   ) {
   id: ID!
-  created: AWSDateTime!
+  created: AWSTimestamp!
 }
 
 input AddConversationInput {

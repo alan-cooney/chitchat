@@ -17,7 +17,7 @@ export default function Message({
   const bg: CardProps["bg"] = isAuthor ? "primary" : "light";
   const text: CardProps["text"] = isAuthor ? "white" : "dark";
 
-  const created = DateTime.fromISO(message.created);
+  const created = DateTime.fromSeconds(message.created);
   const createdFloatClass = isAuthor ? "text-end" : "text-start";
 
   return (

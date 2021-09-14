@@ -8,7 +8,7 @@ const mockMessage: ConversationMessage = {
   id: "message_UUID",
   text:
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-  created: "2022-01-03T00:00:00.000Z",
+  created: 1631622110,
   user: {
     id: "user_UUID",
     givenName: "Alan",
@@ -23,7 +23,7 @@ const mockConversation: ConversationViewQuery["conversation"] = {
     items: [
       {
         ...mockMessage,
-        created: "2022-01-01T00:00:00.000Z",
+        created: 1631022100,
         user: { ...mockMessage.user, id: "user_OTHER" },
       },
       mockMessage,

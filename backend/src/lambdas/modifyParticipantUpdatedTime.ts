@@ -38,7 +38,7 @@ export async function modifyUpdatedTime(
   message: Pick<MessageDbObject, "conversationID">,
   participant: ParticipantProjectedAttributes
 ): Promise<void> {
-  const timestampMilliSeconds = new Date();
+  const unixTimestampSeconds = Math.floor(Date.now() / 1000);
 
   await db.update({
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -50,7 +50,7 @@ export async function modifyUpdatedTime(
     UpdateExpression: "SET #sk = :sk",
     ExpressionAttributeNames: { "#sk": "sk" },
     ExpressionAttributeValues: {
-      ":sk": `UPDATED#${timestampMilliSeconds}#CONV#${message.conversationID}`,
+      ":sk": `UPDATED#${unixTimestampSeconds}#CONV#${message.conversationID}`,
     },
   });
 }

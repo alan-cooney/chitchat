@@ -119,7 +119,8 @@ Object {
         "RequestMappingTemplate": "#set($input = $context.args.input)
 #set($uuid = $util.autoId())
 #set($shortUUID = $uuid.substring(8))
-#set($id = \\"$util.time.nowEpochMilliSeconds()$shortUUID\\")
+#set($id = \\"$util.time.nowEpochSeconds()$shortUUID\\")
+#set($input.created = $util.time.nowEpochSeconds())
 
 {
     \\"version\\": \\"2017-02-28\\",

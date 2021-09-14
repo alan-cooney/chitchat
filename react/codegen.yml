@@ -10,7 +10,7 @@ generates:
         AWSDate: string
         AWSTime: string
         AWSDateTime: string
-        AWSTimestamp: string
+        AWSTimestamp: number
         AWSEmail: string
         AWSJSON: '{ [key: string]: any }'
         AWSURL: string

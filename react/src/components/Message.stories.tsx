@@ -6,7 +6,7 @@ const mockMessage: ConversationMessage = {
   id: "message_UUID",
   text:
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-  created: "2022-01-01T00:00:00.000Z",
+  created: 1630602110,
   user: {
     id: "user_UUID",
     givenName: "Alan",
