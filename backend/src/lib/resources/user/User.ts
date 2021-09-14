@@ -51,5 +51,15 @@ export default class User {
       ),
       responseMappingTemplate: MappingTemplate.dynamoDbResultItem(),
     });
+
+    tableDS.createResolver({
+      typeName: "Message",
+      fieldName: "user",
+      // Works with the same code as Participant -> user
+      requestMappingTemplate: MappingTemplate.fromFile(
+        join(__dirname, "./velocity/participantUserRequest.vtl")
+      ),
+      responseMappingTemplate: MappingTemplate.dynamoDbResultItem(),
+    });
   }
 }

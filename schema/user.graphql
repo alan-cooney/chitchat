@@ -10,6 +10,10 @@ type Participant {
   user: UserPublicProfile!
 }
 
+type Message {
+  user: UserPublicProfile!
+}
+
 """
 Chat User
 """
@@ -36,6 +40,7 @@ Chat user public profile
 type UserPublicProfile implements Node {
   id: ID!
   givenName: String!
+  familyName: String
 }
 
 input UpdateUserInput {
