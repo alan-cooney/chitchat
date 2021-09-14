@@ -1,12 +1,12 @@
 query ConversationView($appID: ID!, $id: ID!) {
   conversation(appID: $appID, id: $id) {
-    id
     messages {
       items {
         id
         text
         created
         user {
+          id
           givenName
           familyName
         }

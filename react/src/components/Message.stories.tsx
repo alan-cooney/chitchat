@@ -8,17 +8,22 @@ const mockMessage: ConversationMessage = {
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
   created: "2022-01-01T00:00:00.000Z",
   user: {
+    id: "user_UUID",
     givenName: "Alan",
     familyName: "Cooney",
   },
 };
 
-export const OtherAuthor = () => <Message message={mockMessage} />;
+const mockUser = { id: mockMessage.user.id };
 
-export const IsAuthor = () => <Message message={mockMessage} isAuthor />;
+export const OtherAuthor = () => (
+  <Message message={mockMessage} user={{ id: "user_OTHER" }} />
+);
+
+export const IsAuthor = () => <Message message={mockMessage} user={mockUser} />;
 
 export const ShortText = () => (
-  <Message message={{ ...mockMessage, text: "Short text." }} isAuthor />
+  <Message message={{ ...mockMessage, text: "Short text." }} user={mockUser} />
 );
 
 export default {

@@ -1,17 +1,19 @@
 import React from "react";
-import { Card, CardProps, Col, Row } from "react-bootstrap";
+import { Card, CardProps } from "react-bootstrap";
 import { DateTime } from "luxon";
-import { ConversationViewQuery } from "../types/graphql";
+import { ConversationViewQuery, User } from "../types/graphql";
 
 export type ConversationMessage = ConversationViewQuery["conversation"]["messages"]["items"][0];
 
 export default function Message({
   message,
-  isAuthor = false,
+  user,
 }: {
   message: ConversationMessage;
-  isAuthor?: boolean;
+  user: Pick<User, "id">;
 }) {
+  const isAuthor = user.id === message.user.id;
+
   const bg: CardProps["bg"] = isAuthor ? "primary" : "light";
   const text: CardProps["text"] = isAuthor ? "white" : "dark";
 
@@ -37,7 +39,7 @@ export default function Message({
           <Card.Body>{message.text}</Card.Body>
         </Card>
         <div className={`text-muted light small ${createdFloatClass}`}>
-          {created.toLocaleString(DateTime.TIME_24_SIMPLE)}
+          {created.toLocaleString(DateTime.TIME_SIMPLE)}
         </div>
       </div>
     </div>
